@@ -17,7 +17,7 @@ class ControllerBase
   def initialize(req, res, route_params = {})
     @req = req
     @res = res
-    @params = req.params.merge(route_params)
+    p @params = req.params.merge(route_params)
     @already_built_response = false
   end
 
@@ -28,11 +28,13 @@ class ControllerBase
 
   # Set the response status code and header
   def redirect_to(url)
+    p url
     unless @already_built_response
       @already_built_response = true
       res.status = 302
       res['Location'] = url
       session.store_session(res)
+      flash.store_flash(res)
     else
       raise "Can't render/redirect more than once"
     end
@@ -47,6 +49,7 @@ class ControllerBase
       res['Content-Type'] = content_type
       res.write(content)
       session.store_session(res)
+      flash.store_flash(res)
     else
       raise "Can't render/redirect more than once"
     end
@@ -78,9 +81,6 @@ class ControllerBase
     else
       form_authenticity_token
     end
-    
-    session.store_session(res)
-    flash.store_flash(res)
 
     self.send(name)
     render name unless already_built_response?

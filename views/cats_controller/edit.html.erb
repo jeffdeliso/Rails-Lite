@@ -1,4 +1,5 @@
-<form action="/cats" method="POST">
+<form action="/cats/<%= @cat.id %>" method="POST">
+  <input type="hidden" name="_method" value="patch">
   <label>Name
     <input type="text" name="cat[name]" value="<%= @cat.name %>">
   </label>
