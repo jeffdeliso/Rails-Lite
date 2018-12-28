@@ -47,6 +47,15 @@ class SQLObject
     parse_all(results)
   end
 
+  def self.first
+    results = DBConnection.execute("Select * FROM #{self.table_name} LIMIT 1")
+    parse_all(results).first
+  end
+
+  def self.last
+    all.last
+  end
+
   def self.parse_all(results)
     results.map do |params|
       new(params)
@@ -115,21 +124,10 @@ class SQLObject
     SQL
   end
 
-  # def validators
-  #   @validators ||= []
-  # end
-
-  # def validates(attribute, options = {})
-  #   validators << Validator.new(attribute, options)
-  #   p validators
-  # end
-
-  # def valid?
-  #   self.class.validators.all? { |validator| validator.valid?(self) }
-  # end
 
   private
   
+
   def insert
     raise "#{self} already in database" if self.id
     DBConnection.execute(<<-SQL, *attribute_values)
@@ -164,41 +162,3 @@ class SQLObject
     attributes.keys.map { |attr| "#{attr} = ?" }.join(", ")
   end
 end
-
-# def insert_str
-#   result = "#{self.class.table_name} ("
-#   vars = self.class.columns[1..-1]
-#   vars.each_with_index do |ivar, idx|
-#     result += ivar.to_s
-#     result += ", " unless idx == vars.length - 1
-#   end
-#   result += ")"
-# end
-
-# def insert_values
-#   result = "("
-#   vars = self.class.columns[1..-1]
-#   vars.each_with_index do |ivar, idx|
-#     if ivar..to_s.to_i.zero?
-#       result += "'#{self.send(ivar)}'" 
-#     else
-#       result += "#{self.send(ivar)}" 
-#     end
-#     result += ", " unless idx == vars.length - 1
-#   end
-#   result += ")"
-# end
-
-# def update_str
-#   result = ""
-#   vars = self.class.columns[1..-1]
-#   vars.each_with_index do |ivar, idx|
-#     if ivar.to_s.to_i.zero?
-#       result += "#{ivar} = '#{self.send(ivar)}'" 
-#     else
-#       result += "#{ivar} = #{self.send(ivar)}" 
-#     end
-#     result += ", " unless idx == vars.length - 1
-#   end
-#   result
-# end

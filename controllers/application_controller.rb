@@ -3,7 +3,7 @@ require_relative '../lib/controller_base'
 class ApplicationController < ControllerBase
 
   def current_user
-    @current_user ||= User.where(session_token: session[:session_token]).first
+    @current_user ||= User.find_by(session_token: session[:session_token])
   end
 
   def ensure_login

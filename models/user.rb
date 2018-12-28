@@ -3,12 +3,18 @@ require 'bcrypt'
 class User < ApplicationModel
   # Human.finalize!
   validates :username, presence: true, class: String, uniqueness: true
+  validates :password_digest, presence: true
+  validates :password, presence: true
+  validates :session_token, presence: true, uniqueness: true
+
 
   belongs_to :house, class_name: :House, foreign_key: :house_id
   has_many :cats, class_name: :Cat, foreign_key: :owner_id
 
+  attr_reader :password
+
   def self.find_by_credentials(username, password)
-    user = User.where(username: username).first
+    user = User.find_by(username: username)
     user && user.is_password?(password) ? user : nil
   end
 

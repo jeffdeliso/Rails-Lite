@@ -1,18 +1,27 @@
-# require_relative 'db_connection'
-# require_relative 'sql_object'
-
 module Searchable
   
   def where(params)
-    result = DBConnection.execute(<<-SQL, *params.values)
+    if params.is_a?(Hash)
+      where_line = params_string(params)
+      vals = params.values
+    else
+      where_line = params
+      vals = []
+    end
+      
+    result = DBConnection.execute(<<-SQL, vals)
       SELECT
         *
       FROM
         #{self.table_name}
       WHERE
-        #{params_string(params)}
+        #{where_line}
     SQL
     self.parse_all(result)
+  end
+
+  def find_by(params)
+    where(params).first
   end
   
   private
@@ -21,14 +30,3 @@ module Searchable
     params.keys.map { |key| "#{key} = ?" }.join(" AND ")
   end
 end
-
-# def param_str(params)
-#   params.map do |k, v|
-#     if v.to_i.zero?
-#      "#{k} = '#{v}'"
-#     else
-#       "#{k} = #{v}"
-#     end
-#   end
-#   .join(" AND ")
-# end
