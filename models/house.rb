@@ -3,6 +3,6 @@
 class House < ApplicationModel
   # House.finalize!
 
-  has_many :humen, class_name: :Human, foreign_key: :house_id
-  has_many_through :cats, :humen, :cats
+  has_many :users, class_name: :User, foreign_key: :house_id
+  has_many_through :cats, :users, :cats
 end

@@ -69,7 +69,7 @@ class SQLObject
     self.class.finalize!
 
     params.each do |k, v|
-      raise "unknown attribute '#{k}'" unless self.class.columns.include?(k.to_sym)
+      # raise "unknown attribute '#{k}'" unless self.class.columns.include?(k.to_sym)
       str = k.to_s + "="
       self.send(str, v)
     end

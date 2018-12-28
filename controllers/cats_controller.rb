@@ -3,6 +3,7 @@ class CatsController < ApplicationController
 
   def index
     @cats = Cat.all
+    @user = current_user
   end
 
   def new

@@ -1,8 +1,21 @@
+<% if flash[:errors] %>
+  <% flash[:errors].each do |error| %>
+    <%= error %>
+  <% end %>
+<% end %>
+<% if logged_in? %>
+  <h1><%= current_user.username %></h1>
+  <form action="/sessions" method="POST">
+    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+    <input type="hidden" name="_method" value="delete">
+    <input type="submit" value="Logout">
+  </form>
+<% end %>
+
 <h1><%= @cat.name %></h1>
-<h1><%= @cat.owner.fname %></h1>
-<h1><%= @cat.house.cats %></h1>
 <a href="/cats">All the cats</a>
-<form action="">
+<form action="/cats/<%= @cat.id %>" method="POST">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
   <input type="hidden" name="_method" value="delete">
   <input type="submit" value="Delete">
 </form>
