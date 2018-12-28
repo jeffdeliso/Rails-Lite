@@ -16,7 +16,8 @@ class CatsController < ControllerBase
   end
 
   def create
-    cat = Cat.new(params['cat'])
+    p cat_params
+    cat = Cat.new(cat_params)
     cat.save
     redirect_to("/cats/#{cat.id}")
   end
@@ -27,7 +28,7 @@ class CatsController < ControllerBase
 
   def update
     cat = Cat.find(params['id'])
-    cat.update_params(params['cat'])
+    cat.update_params(cat_params)
     cat.save
     redirect_to("/cats/#{cat.id}")
   end
@@ -36,5 +37,9 @@ class CatsController < ControllerBase
     cat = Cat.find(params['id'])
     cat.destroy
     redirect_to("/cats")
+  end
+
+  def cat_params
+    params.require(:cat).permit(:name, :owner_id)
   end
 end

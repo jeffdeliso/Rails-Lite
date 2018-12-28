@@ -3,23 +3,28 @@ require_relative 'searchable'
 require_relative 'associatable'
 require 'active_support/inflector'
 
-# NB: the attr_accessor we wrote in phase 0 is NOT used in the rest
-# of this project. It was only a warm up.
-
 class SQLObject
   extend Searchable
   extend Associatable
 
   def self.columns
-    @columns ||= DBConnection.instance.execute2("Select * FROM '#{self.table_name}' LIMIT 1").first.map { |str| str.to_sym }
+    @columns ||= DBConnection.execute2(<<-SQL)
+      Select 
+        * 
+      FROM 
+        '#{self.table_name}' 
+      LIMIT 0
+    SQL
+    .first.map!(&:to_sym)
   end
 
   def self.finalize!
     columns.each do |column|
-      setter_name = column.to_s + "="
       define_method(column) do 
         attributes[column]
       end
+      
+      setter_name = column.to_s + "="
       define_method(setter_name) do |val|
         attributes[column] = val
       end
@@ -46,7 +51,7 @@ class SQLObject
   end
 
   def self.find(id)
-    results = DBConnection.instance.execute(<<-SQL, id)
+    results = DBConnection.execute(<<-SQL, id)
       Select 
         * 
       FROM 
@@ -83,68 +88,6 @@ class SQLObject
     attributes.values
   end
 
-  def insert
-    raise "#{self} already in database" if self.id
-    DBConnection.instance.execute(<<-SQL, *attribute_values)
-    INSERT INTO
-    #{self.class.table_name} (#{column_names})
-    VALUES
-    (#{question_marks})
-    SQL
-    self.id = DBConnection.instance.last_insert_row_id
-  end
-  
-  # def insert_str
-  #   result = "#{self.class.table_name} ("
-  #   vars = self.class.columns[1..-1]
-  #   vars.each_with_index do |ivar, idx|
-  #     result += ivar.to_s
-  #     result += ", " unless idx == vars.length - 1
-  #   end
-  #   result += ")"
-  # end
-  
-  # def insert_values
-  #   result = "("
-  #   vars = self.class.columns[1..-1]
-  #   vars.each_with_index do |ivar, idx|
-  #     if ivar..to_s.to_i.zero?
-  #       result += "'#{self.send(ivar)}'" 
-  #     else
-  #       result += "#{self.send(ivar)}" 
-  #     end
-  #     result += ", " unless idx == vars.length - 1
-  #   end
-  #   result += ")"
-  # end
-  
-  
-  def update
-    DBConnection.instance.execute(<<-SQL, *attribute_values, id)
-    UPDATE
-    #{self.class.table_name}
-    SET
-    #{update_string}
-    WHERE
-    id = ?
-    SQL
-  end
-  
-  
-  # def update_str
-  #   result = ""
-  #   vars = self.class.columns[1..-1]
-  #   vars.each_with_index do |ivar, idx|
-  #     if ivar.to_s.to_i.zero?
-  #       result += "#{ivar} = '#{self.send(ivar)}'" 
-  #     else
-  #       result += "#{ivar} = #{self.send(ivar)}" 
-  #     end
-  #     result += ", " unless idx == vars.length - 1
-  #   end
-  #   result
-  # end
-  
   def save
     if id
       update
@@ -164,9 +107,31 @@ class SQLObject
   end
   
   private
-
+  
+  def insert
+    raise "#{self} already in database" if self.id
+    DBConnection.execute(<<-SQL, *attribute_values)
+    INSERT INTO
+      #{self.class.table_name} (#{column_names})
+    VALUES
+      (#{question_marks})
+    SQL
+    self.id = DBConnection.last_insert_row_id
+  end
+  
+  def update
+    DBConnection.instance.execute(<<-SQL, *attribute_values, id)
+    UPDATE
+      #{self.class.table_name}
+    SET
+      #{update_string}
+    WHERE
+      id = ?
+    SQL
+  end
+  
   def question_marks
-     (["?"] * attributes.count).join(", ")
+    (["?"] * attributes.count).join(", ")
   end
   
   def column_names 
@@ -177,3 +142,41 @@ class SQLObject
     attributes.keys.map { |attr| "#{attr} = ?" }.join(", ")
   end
 end
+
+# def insert_str
+#   result = "#{self.class.table_name} ("
+#   vars = self.class.columns[1..-1]
+#   vars.each_with_index do |ivar, idx|
+#     result += ivar.to_s
+#     result += ", " unless idx == vars.length - 1
+#   end
+#   result += ")"
+# end
+
+# def insert_values
+#   result = "("
+#   vars = self.class.columns[1..-1]
+#   vars.each_with_index do |ivar, idx|
+#     if ivar..to_s.to_i.zero?
+#       result += "'#{self.send(ivar)}'" 
+#     else
+#       result += "#{self.send(ivar)}" 
+#     end
+#     result += ", " unless idx == vars.length - 1
+#   end
+#   result += ")"
+# end
+
+# def update_str
+#   result = ""
+#   vars = self.class.columns[1..-1]
+#   vars.each_with_index do |ivar, idx|
+#     if ivar.to_s.to_i.zero?
+#       result += "#{ivar} = '#{self.send(ivar)}'" 
+#     else
+#       result += "#{ivar} = #{self.send(ivar)}" 
+#     end
+#     result += ", " unless idx == vars.length - 1
+#   end
+#   result
+# end

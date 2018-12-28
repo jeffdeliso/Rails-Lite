@@ -2,8 +2,10 @@ require 'active_support'
 require 'active_support/core_ext'
 require 'erb'
 require_relative './session'
-require_relative './flash'
 require 'active_support/inflector'
+require_relative './flash'
+require_relative './strong_params'
+
 
 class ControllerBase
   attr_reader :req, :res, :params
@@ -17,7 +19,7 @@ class ControllerBase
   def initialize(req, res, route_params = {})
     @req = req
     @res = res
-    @params = req.params.merge(route_params)
+    @params = StrongParams.new_syms(req.params.merge(route_params))
     @already_built_response = false
   end
 

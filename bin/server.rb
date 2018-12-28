@@ -1,5 +1,6 @@
 require 'rack'
 require_relative '../lib/router'
+require_relative '../lib/sql_object'
 require_relative '../models/cat'
 require_relative '../models/human'
 require_relative '../models/house'

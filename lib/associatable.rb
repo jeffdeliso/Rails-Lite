@@ -1,5 +1,5 @@
-require_relative 'searchable'
-require 'active_support/inflector'
+# require_relative 'searchable'
+# require 'active_support/inflector'
 
 class AssocOptions
   attr_accessor(
