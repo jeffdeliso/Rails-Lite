@@ -1,12 +1,15 @@
 require_relative 'db_connection'
 require_relative 'searchable'
 require_relative 'associatable'
+require_relative 'validations'
 require 'active_support/inflector'
 
 class SQLObject
   extend Searchable
   extend Associatable
-
+  extend Validations
+  include Validations
+  
   def self.columns
     @columns ||= DBConnection.execute2(<<-SQL)
       Select 
@@ -89,10 +92,16 @@ class SQLObject
   end
 
   def save
-    if id
-      update
+    if self.valid?
+      if id
+        update
+      else
+        insert
+      end
+
+      true
     else
-      insert
+      false
     end
   end
   
@@ -105,7 +114,20 @@ class SQLObject
         id = ?
     SQL
   end
-  
+
+  # def validators
+  #   @validators ||= []
+  # end
+
+  # def validates(attribute, options = {})
+  #   validators << Validator.new(attribute, options)
+  #   p validators
+  # end
+
+  # def valid?
+  #   self.class.validators.all? { |validator| validator.valid?(self) }
+  # end
+
   private
   
   def insert

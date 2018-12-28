@@ -20,6 +20,7 @@ class Flash
   def []=(key, val)
     cookie_data[key.to_s] = val
   end
+  
   # serialize the hash into json and save in a cookie
   # add to the responses cookies
   def store_flash(res)

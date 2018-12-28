@@ -14,9 +14,13 @@ class CatsController < ControllerBase
   end
 
   def create
-    cat = Cat.new(cat_params)
-    cat.save
-    redirect_to("/cats/#{cat.id}")
+    @cat = Cat.new(cat_params)
+    if @cat.save
+      redirect_to("/cats/#{@cat.id}")
+    else
+      flash.now['errors'] = @cat.errors
+      render :new
+    end
   end
 
   def edit
@@ -24,10 +28,14 @@ class CatsController < ControllerBase
   end
 
   def update
-    cat = Cat.find(params['id'])
-    cat.update_params(cat_params)
-    cat.save
-    redirect_to("/cats/#{cat.id}")
+    @cat = Cat.find(params['id'])
+    @cat.update_params(cat_params)
+    if @cat.save
+      redirect_to("/cats/#{@cat.id}")
+    else
+      flash.now['errors'] = @cat.errors
+      render :edit
+    end
   end
 
   def destroy

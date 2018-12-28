@@ -10,7 +10,7 @@ module Searchable
       FROM
         #{self.table_name}
       WHERE
-        #{param_string(params)}
+        #{params_string(params)}
     SQL
     self.parse_all(result)
   end
