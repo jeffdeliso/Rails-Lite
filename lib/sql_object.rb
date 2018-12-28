@@ -47,9 +47,12 @@ class SQLObject
 
   def self.find(id)
     results = DBConnection.instance.execute(<<-SQL, id)
-      Select * 
-      FROM '#{table_name}' 
-      WHERE id = ?
+      Select 
+        * 
+      FROM 
+        '#{table_name}' 
+      WHERE 
+        id = ?
     SQL
     parse_all(results).first
   end
@@ -82,65 +85,66 @@ class SQLObject
 
   def insert
     raise "#{self} already in database" if self.id
-    DBConnection.instance.execute(<<-SQL)
-      INSERT INTO
-        #{insert_str}
-      VALUES
-        #{insert_values}
+    DBConnection.instance.execute(<<-SQL, *attribute_values)
+    INSERT INTO
+    #{self.class.table_name} (#{column_names})
+    VALUES
+    (#{question_marks})
     SQL
     self.id = DBConnection.instance.last_insert_row_id
   end
-
-  def insert_str
-    result = "#{self.class.table_name} ("
-    vars = self.class.columns[1..-1]
-    vars.each_with_index do |ivar, idx|
-      result += ivar.to_s
-      result += ", " unless idx == vars.length - 1
-    end
-    result += ")"
-  end
-
-  def insert_values
-    result = "("
-    vars = self.class.columns[1..-1]
-    vars.each_with_index do |ivar, idx|
-      if ivar..to_s.to_i.zero?
-        result += "'#{self.send(ivar)}'" 
-      else
-        result += "#{self.send(ivar)}" 
-      end
-      result += ", " unless idx == vars.length - 1
-    end
-    result += ")"
-  end
-
-
+  
+  # def insert_str
+  #   result = "#{self.class.table_name} ("
+  #   vars = self.class.columns[1..-1]
+  #   vars.each_with_index do |ivar, idx|
+  #     result += ivar.to_s
+  #     result += ", " unless idx == vars.length - 1
+  #   end
+  #   result += ")"
+  # end
+  
+  # def insert_values
+  #   result = "("
+  #   vars = self.class.columns[1..-1]
+  #   vars.each_with_index do |ivar, idx|
+  #     if ivar..to_s.to_i.zero?
+  #       result += "'#{self.send(ivar)}'" 
+  #     else
+  #       result += "#{self.send(ivar)}" 
+  #     end
+  #     result += ", " unless idx == vars.length - 1
+  #   end
+  #   result += ")"
+  # end
+  
+  
   def update
-      DBConnection.instance.execute(<<-SQL, id)
-        UPDATE
-          #{self.class.table_name}
-        SET
-          #{update_str}
-        WHERE
-          id = ?
-      SQL
+    DBConnection.instance.execute(<<-SQL, *attribute_values, id)
+    UPDATE
+    #{self.class.table_name}
+    SET
+    #{update_string}
+    WHERE
+    id = ?
+    SQL
   end
-
-  def update_str
-    result = ""
-    vars = self.class.columns[1..-1]
-    vars.each_with_index do |ivar, idx|
-      if ivar.to_s.to_i.zero?
-        result += "#{ivar} = '#{self.send(ivar)}'" 
-      else
-        result += "#{ivar} = #{self.send(ivar)}" 
-      end
-      result += ", " unless idx == vars.length - 1
-    end
-    result
-  end
-
+  
+  
+  # def update_str
+  #   result = ""
+  #   vars = self.class.columns[1..-1]
+  #   vars.each_with_index do |ivar, idx|
+  #     if ivar.to_s.to_i.zero?
+  #       result += "#{ivar} = '#{self.send(ivar)}'" 
+  #     else
+  #       result += "#{ivar} = #{self.send(ivar)}" 
+  #     end
+  #     result += ", " unless idx == vars.length - 1
+  #   end
+  #   result
+  # end
+  
   def save
     if id
       update
@@ -148,14 +152,28 @@ class SQLObject
       insert
     end
   end
-
+  
   def destroy
     DBConnection.instance.execute(<<-SQL, id)
-      DELETE
-      FROM
-        #{self.class.table_name}
-      WHERE
-        id = ?
+    DELETE
+    FROM
+      #{self.class.table_name}
+    WHERE
+      id = ?
     SQL
+  end
+  
+  private
+
+  def question_marks
+     (["?"] * attributes.count).join(", ")
+  end
+  
+  def column_names 
+    attributes.keys.map(&:to_s).join(", ")
+  end
+  
+  def update_string
+    attributes.keys.map { |attr| "#{attr} = ?" }.join(", ")
   end
 end

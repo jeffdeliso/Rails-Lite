@@ -1,7 +1,6 @@
 require_relative 'searchable'
 require 'active_support/inflector'
 
-# Phase IIIa
 class AssocOptions
   attr_accessor(
     :foreign_key,
@@ -20,7 +19,11 @@ end
 
 class BelongsToOptions < AssocOptions
   def initialize(name, options = {})
-    default = {foreign_key: "#{name}_id".to_sym, class_name: name.to_s.capitalize , primary_key: :id}
+    default = {
+      foreign_key: "#{name}_id".to_sym,
+      class_name: name.to_s.capitalize, 
+      primary_key: :id
+    }
     default.merge!(options)
 
     @foreign_key = default[:foreign_key]
@@ -31,7 +34,11 @@ end
 
 class HasManyOptions < AssocOptions
   def initialize(name, self_class_name, options = {})
-    default = {foreign_key: "#{self_class_name.downcase}_id".to_sym, class_name: name.to_s.capitalize.singularize , primary_key: :id}
+    default = {
+      foreign_key: "#{self_class_name.downcase}_id".to_sym,
+      class_name: name.to_s.capitalize.singularize,
+      primary_key: :id
+    }
     default.merge!(options)
 
     @foreign_key = default[:foreign_key]
@@ -41,10 +48,11 @@ class HasManyOptions < AssocOptions
 end
 
 module Associatable
-  # Phase IIIb
+
   def belongs_to(name, options = {})
     options = BelongsToOptions.new(name, options)
     assoc_options[name] = options
+
     self.define_method(name) do 
       options.model_class.find(self.send(options.foreign_key))
     end
@@ -53,6 +61,7 @@ module Associatable
   def has_many(name, options = {})
     options = HasManyOptions.new(name, self.to_s, options)
     assoc_options[name] = options
+
     self.define_method(name) do 
       options.model_class.where(options.foreign_key => self.send(options.primary_key))
     end
@@ -66,8 +75,7 @@ module Associatable
   def has_one_through(name, through_name, source_name)
     define_method(name) do
       through_options = self.class.assoc_options[through_name]
-      source_options =
-        through_options.model_class.assoc_options[source_name]
+      source_options = through_options.model_class.assoc_options[source_name]
 
       through_table = through_options.table_name
       through_pk = through_options.primary_key
@@ -98,8 +106,7 @@ module Associatable
   def has_many_through(name, through_name, source_name)
     define_method(name) do
       through_options = self.class.assoc_options[through_name]
-      source_options =
-        through_options.model_class.assoc_options[source_name]
+      source_options = through_options.model_class.assoc_options[source_name]
 
       if through_options.is_a?(BelongsToOptions)
         through_self_id = through_options.primary_key
