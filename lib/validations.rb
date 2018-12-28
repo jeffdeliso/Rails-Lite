@@ -19,8 +19,8 @@ class Validator
   end
 
   def uniqueness(obj, val, errors_array)
-    arr = obj.class.where(attribute => val)
-    errors_array << "#{attribute} must be unique" unless arr.empty? || arr.first.id = obj.id
+    arr = obj.class.where("#{attribute} = '#{val}' AND id != #{obj.id || 'NULL'}")
+    errors_array << "#{attribute} must be unique" unless arr.empty?
   end
 
   def class(_obj, val, errors_array)
