@@ -44,7 +44,6 @@ module Associatable
   # Phase IIIb
   def belongs_to(name, options = {})
     options = BelongsToOptions.new(name, options)
-    # key = options.class_name.to_s.downcase.to_sym
     assoc_options[name] = options
     self.define_method(name) do 
       options.model_class.find(self.send(options.foreign_key))
@@ -53,7 +52,6 @@ module Associatable
 
   def has_many(name, options = {})
     options = HasManyOptions.new(name, self.to_s, options)
-    # key = options.class_name.to_s.downcase.to_sym
     assoc_options[name] = options
     self.define_method(name) do 
       options.model_class.where(options.foreign_key => self.send(options.primary_key))
@@ -66,9 +64,6 @@ module Associatable
   end
 
   def has_one_through(name, through_name, source_name)
-    # self.define_method(name) do 
-    #   self.send(through_name).send(source_name)
-    # end
     define_method(name) do
       through_options = self.class.assoc_options[through_name]
       source_options =
@@ -101,9 +96,6 @@ module Associatable
   end
 
   def has_many_through(name, through_name, source_name)
-    # self.define_method(name) do 
-    #   self.send(through_name).send(source_name)
-    # end
     define_method(name) do
       through_options = self.class.assoc_options[through_name]
       source_options =
@@ -126,12 +118,7 @@ module Associatable
       end
 
       through_table = through_options.table_name
-      # through_pk = through_options.primary_key
-      # through_fk = through_options.foreign_key
-
       source_table = source_options.table_name
-      # source_pk = source_options.primary_key
-      # source_fk = source_options.foreign_key
 
       key_val = self.send(:id)
       results = DBConnection.execute(<<-SQL, key_val)
