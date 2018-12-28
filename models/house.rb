@@ -1,6 +1,6 @@
 # require_relative '../lib/sql_object'
 
-class House < SQLObject
+class House < ApplicationModel
   # House.finalize!
 
   has_many :humen, class_name: :Human, foreign_key: :house_id

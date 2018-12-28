@@ -1,4 +1,4 @@
-class CatsController < ControllerBase
+class CatsController < ApplicationController
   protect_from_forgery
 
   def index
