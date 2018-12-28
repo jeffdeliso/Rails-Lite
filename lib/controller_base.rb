@@ -28,7 +28,6 @@ class ControllerBase
 
   # Set the response status code and header
   def redirect_to(url)
-    p url
     unless @already_built_response
       @already_built_response = true
       res.status = 302

@@ -1,6 +1,8 @@
 require_relative '../lib/controller_base'
 
 class CatsController < ControllerBase
+  protect_from_forgery
+
   def index
     @cats = Cat.all
   end

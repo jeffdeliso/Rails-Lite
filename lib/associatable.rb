@@ -110,18 +110,18 @@ module Associatable
         through_options.model_class.assoc_options[source_name]
 
       if through_options.is_a?(BelongsToOptions)
-        through_self_id = :id
+        through_self_id = through_options.primary_key
         self_through_id = through_options.foreign_key
       else
         through_self_id = through_options.foreign_key
-        self_through_id = :id
+        self_through_id = through_options.primary_key
       end
 
       if source_options.is_a?(BelongsToOptions)
         through_source_id = source_options.foreign_key
-        source_through_id = :id
+        source_through_id = source_options.primary_key
       else
-        through_source_id = :id
+        through_source_id = source_options.primary_key
         source_through_id = source_options.foreign_key
       end
 
