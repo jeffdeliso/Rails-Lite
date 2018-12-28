@@ -2,7 +2,7 @@ require 'bcrypt'
 
 class User < ApplicationModel
   # Human.finalize!
-  # validates :username, presence: true, class: String, uniqueness: true
+  validates :username, presence: true, class: String, uniqueness: true
 
   belongs_to :house, class_name: :House, foreign_key: :house_id
   has_many :cats, class_name: :Cat, foreign_key: :owner_id

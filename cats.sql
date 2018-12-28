@@ -3,17 +3,17 @@ CREATE TABLE cats (
   name VARCHAR(255) NOT NULL,
   owner_id INTEGER,
 
-  FOREIGN KEY(owner_id) REFERENCES human(id)
+  FOREIGN KEY(owner_id) REFERENCES users(id)
 );
 
 CREATE TABLE users (
   id INTEGER PRIMARY KEY,
   username VARCHAR(255) NOT NULL,
-  password_digest VARCHAR(255) NOT NULL,
-  session_token VARCHAR(255) NOT NULL,
+  password_digest VARCHAR(255),
+  session_token VARCHAR(255),
   house_id INTEGER,
 
-  FOREIGN KEY(house_id) REFERENCES human(id)
+  FOREIGN KEY(house_id) REFERENCES users(id)
 );
 
 CREATE TABLE houses (
@@ -26,13 +26,13 @@ INSERT INTO
 VALUES
   (1, "26th and Guerrero"), (2, "Dolores and Market");
 
--- INSERT INTO
---   humen (id, fname, lname, house_id)
--- VALUES
---   (1, "Devon", "Watts", 1),
---   (2, "Matt", "Rubens", 1),
---   (3, "Ned", "Ruggeri", 2),
---   (4, "Catless", "Human", NULL);
+INSERT INTO
+  users (id, username, house_id)
+VALUES
+  (1, "Devon", 1),
+  (2, "Matt", 1),
+  (3, "Ned", 2),
+  (4, "Catless", NULL);
 
 INSERT INTO
   cats (id, name, owner_id)
