@@ -1,49 +1,52 @@
 require 'rack'
-require_relative '../lib/controller_base.rb'
+# require_relative '../lib/controller_base.rb'
 require_relative '../lib/router'
-require_relative '../lib/sql_object'
-require_relative '../lib/controller_base'
+require_relative '../controllers/cats_controller'
+require_relative '../models/cat'
+# require_relative '../controllers/humans_controller'
+require_relative '../models/human'
+require_relative '../models/house'
 
-class Cat < SQLObject
-  Cat.finalize!
-end
+# class Cat < SQLObject
+#   Cat.finalize!
+# end
 
-class CatsController < ControllerBase
-  def index
-    @cats = Cat.all
-  end
+# class CatsController < ControllerBase
+#   def index
+#     @cats = Cat.all
+#   end
 
-  def new
-    @cat = Cat.new
-  end
+#   def new
+#     @cat = Cat.new
+#   end
 
-  def show
-    @cat = Cat.find(params['id'])
-  end
+#   def show
+#     @cat = Cat.find(params['id'])
+#   end
 
-  def create
-    cat = Cat.new(params['cat'])
-    cat.save
-    redirect_to("/cats/#{cat.id}")
-  end
+#   def create
+#     cat = Cat.new(params['cat'])
+#     cat.save
+#     redirect_to("/cats/#{cat.id}")
+#   end
 
-  def edit
-    @cat = Cat.find(params['id'])
-  end
+#   def edit
+#     @cat = Cat.find(params['id'])
+#   end
 
-  def update
-    cat = Cat.find(params['id'])
-    cat.update_params(params['cat'])
-    cat.save
-    redirect_to("/cats/#{cat.id}")
-  end
+#   def update
+#     cat = Cat.find(params['id'])
+#     cat.update_params(params['cat'])
+#     cat.save
+#     redirect_to("/cats/#{cat.id}")
+#   end
 
-  def destroy
-    cat = Cat.find(params['id'])
-    cat.destroy
-    redirect_to("/cats")
-  end
-end
+#   def destroy
+#     cat = Cat.find(params['id'])
+#     cat.destroy
+#     redirect_to("/cats")
+#   end
+# end
 
 router = Router.new
 router.draw do

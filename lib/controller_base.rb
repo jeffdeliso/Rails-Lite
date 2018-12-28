@@ -17,7 +17,7 @@ class ControllerBase
   def initialize(req, res, route_params = {})
     @req = req
     @res = res
-    p @params = req.params.merge(route_params)
+    @params = req.params.merge(route_params)
     @already_built_response = false
   end
 
@@ -102,5 +102,6 @@ class ControllerBase
   def protect_from_forgery?
     @@protect_from_forgery ||= false
   end
+
 end
 

@@ -6,7 +6,7 @@ CREATE TABLE cats (
   FOREIGN KEY(owner_id) REFERENCES human(id)
 );
 
-CREATE TABLE humans (
+CREATE TABLE humen (
   id INTEGER PRIMARY KEY,
   fname VARCHAR(255) NOT NULL,
   lname VARCHAR(255) NOT NULL,
@@ -26,7 +26,7 @@ VALUES
   (1, "26th and Guerrero"), (2, "Dolores and Market");
 
 INSERT INTO
-  humans (id, fname, lname, house_id)
+  humen (id, fname, lname, house_id)
 VALUES
   (1, "Devon", "Watts", 1),
   (2, "Matt", "Rubens", 1),
