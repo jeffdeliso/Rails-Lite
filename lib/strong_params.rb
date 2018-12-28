@@ -18,7 +18,6 @@ class StrongParams
     @params = params
   end
   
-
   def require(class_name)
     StrongParams.new(params[class_name])
   end

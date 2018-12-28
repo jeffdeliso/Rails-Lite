@@ -10,6 +10,7 @@ class Route
     method = req.params['_method'] || req.request_method
     pattern =~ req.path && http_method.to_s == method.downcase
   end
+
   # use pattern to pull out route params (save for later?)
   # instantiate controller and call controller action
   def run(req, res)
@@ -65,4 +66,5 @@ class Router
       res.write('Route not found')
     end
   end
+  
 end

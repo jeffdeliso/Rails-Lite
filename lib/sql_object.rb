@@ -98,11 +98,11 @@ class SQLObject
   
   def destroy
     DBConnection.instance.execute(<<-SQL, id)
-    DELETE
-    FROM
-      #{self.class.table_name}
-    WHERE
-      id = ?
+      DELETE
+      FROM
+        #{self.class.table_name}
+      WHERE
+        id = ?
     SQL
   end
   
@@ -111,22 +111,22 @@ class SQLObject
   def insert
     raise "#{self} already in database" if self.id
     DBConnection.execute(<<-SQL, *attribute_values)
-    INSERT INTO
-      #{self.class.table_name} (#{column_names})
-    VALUES
-      (#{question_marks})
+      INSERT INTO
+        #{self.class.table_name} (#{column_names})
+      VALUES
+        (#{question_marks})
     SQL
     self.id = DBConnection.last_insert_row_id
   end
   
   def update
     DBConnection.instance.execute(<<-SQL, *attribute_values, id)
-    UPDATE
-      #{self.class.table_name}
-    SET
-      #{update_string}
-    WHERE
-      id = ?
+      UPDATE
+        #{self.class.table_name}
+      SET
+        #{update_string}
+      WHERE
+        id = ?
     SQL
   end
   

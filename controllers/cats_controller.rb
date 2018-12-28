@@ -1,5 +1,3 @@
-require_relative '../lib/controller_base'
-
 class CatsController < ControllerBase
   protect_from_forgery
 
@@ -16,7 +14,6 @@ class CatsController < ControllerBase
   end
 
   def create
-    p cat_params
     cat = Cat.new(cat_params)
     cat.save
     redirect_to("/cats/#{cat.id}")
@@ -38,6 +35,8 @@ class CatsController < ControllerBase
     cat.destroy
     redirect_to("/cats")
   end
+
+  private
 
   def cat_params
     params.require(:cat).permit(:name, :owner_id)
