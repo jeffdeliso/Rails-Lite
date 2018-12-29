@@ -12,20 +12,20 @@ require_relative '../controllers/sessions_controller'
 
 router = Router.new
 router.draw do
-  get Regexp.new("^/cats$"), CatsController, :index
-  get Regexp.new("^/cats/new$"), CatsController, :new
-  get Regexp.new("^/cats/(?<id>\\d+)$"), CatsController, :show
+  get Regexp.new("^/cats/?$"), CatsController, :index
+  get Regexp.new("^/cats/new/?$"), CatsController, :new
+  get Regexp.new("^/cats/(?<id>\\d+)/?$"), CatsController, :show
   post Regexp.new("^/cats$"), CatsController, :create
-  delete Regexp.new("^/cats/(?<id>\\d+)$"), CatsController, :destroy
-  patch Regexp.new("^/cats/(?<id>\\d+)$"), CatsController, :update
-  get Regexp.new("^/cats/(?<id>\\d+)/edit$"), CatsController, :edit
+  delete Regexp.new("^/cats/(?<id>\\d+)/?$"), CatsController, :destroy
+  patch Regexp.new("^/cats/(?<id>\\d+)/?$"), CatsController, :update
+  get Regexp.new("^/cats/(?<id>\\d+)/edit/?$"), CatsController, :edit
 
-  get Regexp.new("^/users/new$"), UsersController, :new
-  post Regexp.new("^/users$"), UsersController, :create
+  get Regexp.new("^/users/new/?$"), UsersController, :new
+  post Regexp.new("^/users/?$"), UsersController, :create
 
-  get Regexp.new("^/sessions/new$"), SessionsController, :new
-  post Regexp.new("^/sessions$"), SessionsController, :create
-  delete Regexp.new("^/sessions$"), SessionsController, :destroy
+  get Regexp.new("^/sessions/new/?$"), SessionsController, :new
+  post Regexp.new("^/sessions/?$"), SessionsController, :create
+  delete Regexp.new("^/sessions/?$"), SessionsController, :destroy
 end
 
 app = Proc.new do |env|

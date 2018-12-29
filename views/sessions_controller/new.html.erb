@@ -12,11 +12,11 @@
     <input type="submit" value="Logout">
   </form>
 <% else %>
-  <a href="/users/new">Sign Up</a>
+  <a href="<%= new_users_url %>">Sign Up</a>
 <% end %>
 
 <h1>Log In</h1>
-<form action="/sessions" method="POST">
+<form action="<%= sessions_url %>" method="POST">
   <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
   <label>Username
     <input type="text" name="user[username]" value="">

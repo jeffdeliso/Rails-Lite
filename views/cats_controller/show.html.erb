@@ -6,14 +6,14 @@
 <br>
 <% if logged_in? %>
   <h1><%= current_user.username %></h1>
-  <form action="/sessions" method="POST">
+  <form action="<%= sessions_url %>" method="POST">
     <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
     <input type="hidden" name="_method" value="delete">
     <input type="submit" value="Logout">
   </form>
 <% else %>
-  <a href="/users/new">Sign Up</a>
-  <a href="/sessions/new">Log In</a>
+  <a href="<%= new_users_url %>">Sign Up</a>
+  <a href="<%= new_sessions_url %>">Log In</a>
 <% end %>
 
 <h1><%= @cat.name %></h1>
@@ -22,10 +22,10 @@
   <li>House: <%= @cat.house.address if @cat.house %></li>
   <li>Siblings: <%= @cat.house.cats if @cat.house %></li>
 </ul>
-<a href="/cats/<%= @cat.id %>/edit">Edit Cat</a>
-<form action="/cats/<%= @cat.id %>" method="POST">
+<a href="<%= edit_cat_url(@cat.id) %>">Edit Cat</a>
+<form action="<%= cat_url(@cat.id) %>" method="POST">
   <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
   <input type="hidden" name="_method" value="delete">
   <input type="submit" value="Delete Cat">
 </form>
-<a href="/cats">All the cats</a>
+<a href="<%= cats_url %>">All the cats</a>

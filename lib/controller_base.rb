@@ -13,12 +13,46 @@ class ControllerBase
     @@protect_from_forgery = true
   end
 
+  def self.make_helpers(patterns)
+    patterns.each do |pattern|
+      url_arr = pattern.inspect.delete('\^$?<>/+()').split('\\').drop(1).reject { |el| el == "d"}
+
+      unless url_arr.include?("id")
+        helper_name = url_arr.reverse.join("_")
+        helper_name += "_url"
+        url = url_arr.join("/")
+        url = "/" + url
+        define_method(helper_name) do
+          url
+        end
+      else
+        name_arr = url_arr.dup
+        name_arr[0] = url_arr.first.singularize
+        helper_name = name_arr.reject { |el| el == "id"}.reverse.join("_")
+        helper_name += "_url"
+
+        define_method(helper_name) do |id|
+          url = url_arr.map do |el|
+            if el == "id"
+              "#{id}"
+            else
+              el
+            end
+          end
+          
+          "/" + url.join("/")
+        end
+      end
+    end
+  end
+
   # Setup the controller
-  def initialize(req, res, route_params = {})
+  def initialize(req, res, route_params = {}, patterns)
     @req = req
     @res = res
     @params = StrongParams.new_syms(req.params.merge(route_params))
     @already_built_response = false
+    self.class.make_helpers(patterns)
   end
 
   # use this with the router to call action_name (:index, :show, :create...)
