@@ -4,14 +4,19 @@ class Validator
 
   def initialize(attribute, options = {})
     default = {
+      allow_nil: false,
       presence: false,
       uniqueness: false,
-      class: nil
+      length: false,
+      class: false
     }
     default.merge!(options)
 
     @attribute = attribute
     @options = default
+  end
+
+  def allow_nil(_obj, _val, _errors_array)
   end
 
   def presence(_obj, val, errors_array)
@@ -33,6 +38,30 @@ class Validator
     errors_array << "#{attribute} must be #{options[:class]}" unless val.is_a?(options[:class])
   end
 
+  def length(_obj, val, errors_array)
+    if val.nil?
+      errors_array << "#{attribute} can't be nil"
+
+      return errors_array
+    elsif options[:length].is_a?(Hash)
+      min = options[:length][:min]
+      if min && val.length < min
+        errors_array << "#{attribute} must be longer than #{min} characters"
+      end
+      
+      max = options[:length][:max]
+      if max && val.length > max
+        errors_array << "#{attribute} must be shorter than #{max} characters"
+      end
+    else
+      unless val.length = options[:length]
+        errors_array << "#{attribute} must be #{max} characters"
+      end
+    end
+
+    errors_array
+  end
+
   def valid?(obj)
     errors(obj).empty?
   end
@@ -40,6 +69,8 @@ class Validator
   def errors(obj)
     errors_array = []
     val = obj.send(attribute)
+
+    return errors_array if val.nil? && options[:allow_nil]
 
     options.each do |name, validate|
       self.send(name, obj, val, errors_array) if validate

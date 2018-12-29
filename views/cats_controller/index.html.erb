@@ -3,6 +3,7 @@
     <%= error %>
   <% end %>
 <% end %>
+<br>
 <% if logged_in? %>
   <h1><%= current_user.username %></h1>
   <form action="/sessions" method="POST">
@@ -10,8 +11,16 @@
     <input type="hidden" name="_method" value="delete">
     <input type="submit" value="Logout">
   </form>
+<% else %>
+  <a href="/users/new">Sign Up</a>
+  <a href="/sessions/new">Log In</a>
 <% end %>
 
 <h1>ALL THE CATS</h1>
-<pre><%= @cats.to_s %></pre>
-<a href="/cats/new">New cat!</a>
+<ul>
+  <% @cats.each do |cat| %>
+    <li><a href="/cats/<%= cat.id %>"><%= cat.name %></a></li>
+  <% end %>
+</ul>
+<a href="/cats/new">New Cat!</a>
+

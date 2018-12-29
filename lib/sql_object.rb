@@ -102,11 +102,7 @@ class SQLObject
 
   def save
     if self.valid?
-      if id
-        update
-      else
-        insert
-      end
+      id ? update : insert
 
       true
     else

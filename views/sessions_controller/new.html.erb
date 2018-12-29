@@ -3,11 +3,23 @@
     <%= error %>
   <% end %>
 <% end %>
+<br>
+<% if logged_in? %>
+  <h1><%= current_user.username %></h1>
+  <form action="/sessions" method="POST">
+    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+    <input type="hidden" name="_method" value="delete">
+    <input type="submit" value="Logout">
+  </form>
+<% else %>
+  <a href="/users/new">Sign Up</a>
+<% end %>
 
+<h1>Log In</h1>
 <form action="/sessions" method="POST">
   <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
   <label>Username
-    <input type="text" name="user[username]" value="<%= @user.username %>">
+    <input type="text" name="user[username]" value="">
   </label>
 
   <label>Password

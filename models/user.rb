@@ -4,7 +4,7 @@ class User < ApplicationModel
   # Human.finalize!
   validates :username, presence: true, class: String, uniqueness: true
   validates :password_digest, presence: true
-  validates :password, presence: true
+  validates :password, presence: true, length: { min: 6 }, allow_nil: true
   validates :session_token, presence: true, uniqueness: true
 
 
