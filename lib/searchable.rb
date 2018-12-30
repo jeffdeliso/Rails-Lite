@@ -9,15 +9,17 @@ module Searchable
       vals = []
     end
       
-    result = DBConnection.execute(<<-SQL, vals)
-      SELECT
-        *
-      FROM
-        #{self.table_name}
-      WHERE
-        #{where_line}
-    SQL
-    self.parse_all(result)
+    # result = DBConnection.execute(<<-SQL, vals)
+    #   SELECT
+    #     *
+    #   FROM
+    #     #{self.table_name}
+    #   WHERE
+    #     #{where_line}
+    # SQL
+    # self.parse_all(result)
+
+    Relation.new(where_line: where_line, where_vals: vals, from: self.table_name)
   end
 
   def find_by(params)
