@@ -6,7 +6,6 @@ class CatsController < ApplicationController
   end
   
   def new
-    ensure_login
     @cat = Cat.new
   end
   
