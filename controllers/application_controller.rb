@@ -7,7 +7,10 @@ class ApplicationController < ControllerBase
   end
 
   def ensure_login
-    redirect_to("/sessions/new") unless logged_in?
+    unless logged_in?
+      flash[:errors] = ['must be logged in']
+      redirect_to new_sessions_url
+    end
   end
 
   def login(user)

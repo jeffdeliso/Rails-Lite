@@ -10,7 +10,7 @@ class UsersController < ApplicationController
     @user.ensure_token
     if @user.save
       login(@user)
-      redirect_to("/cats")
+      redirect_to  cats_url
     else
       flash.now['errors'] = @user.errors
       render :new

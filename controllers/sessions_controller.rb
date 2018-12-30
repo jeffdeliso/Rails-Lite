@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
     @user = User.find_by_credentials(username, password)
     if @user
       login(@user)
-      redirect_to("/cats")
+      redirect_to cats_url
     else
       flash.now['errors'] = ['invalid username/password']
       render :new
@@ -21,7 +21,7 @@ class SessionsController < ApplicationController
 
   def destroy
     logout
-    redirect_to("/sessions/new")
+    redirect_to new_sessions_url
   end
 
   private

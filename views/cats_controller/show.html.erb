@@ -22,8 +22,8 @@
   <li>House: <%= @cat.house.address if @cat.house %></li>
   <li>Siblings: <%= @cat.house.cats if @cat.house %></li>
 </ul>
-<a href="<%= edit_cat_url(@cat.id) %>">Edit Cat</a>
-<form action="<%= cat_url(@cat.id) %>" method="POST">
+<a href="<%= edit_cat_url(@cat) %>">Edit Cat</a>
+<form action="<%= cat_url(@cat) %>" method="POST">
   <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
   <input type="hidden" name="_method" value="delete">
   <input type="submit" value="Delete Cat">

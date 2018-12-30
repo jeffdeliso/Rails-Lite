@@ -5,8 +5,12 @@ require 'active_support/inflector'
 require_relative './session'
 require_relative './flash'
 require_relative './strong_params'
+require_relative './callbacks'
 
 class ControllerBase
+  include CallBacks
+  extend CallBacks
+
   attr_reader :req, :res, :params
 
   def self.protect_from_forgery
@@ -32,9 +36,10 @@ class ControllerBase
         helper_name += "_url"
 
         define_method(helper_name) do |id|
+          obj_id = id.try(:id)
           url = url_arr.map do |el|
             if el == "id"
-              "#{id}"
+              "#{obj_id || id}"
             else
               el
             end
@@ -72,6 +77,10 @@ class ControllerBase
     cookie = { path: '/', value: @form_authenticity_token }
     res.set_cookie('authenticity_token', cookie)
     @form_authenticity_token
+  end
+
+  def link_to(name, path)
+    "<a href=\"#{path}\">#{name}</a>"
   end
   
   protected

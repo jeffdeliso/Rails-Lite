@@ -16,7 +16,7 @@
   <a href="<%= new_sessions_url %>">Log In</a>
 <% end %>
 
-<form action="<%= cat_url(@cat.id) %>" method="POST">
+<form action="<%= cat_url(@cat) %>" method="POST">
   <input type="hidden" name="_method" value="patch">
   <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
 
@@ -30,4 +30,3 @@
 
   <input type="submit">
 </form>
-<%=  %>
