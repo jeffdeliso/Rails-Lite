@@ -12,7 +12,7 @@ class UsersController < ApplicationController
       login(@user)
       redirect_to  cats_url
     else
-      flash.now['errors'] = @user.errors
+      flash.now[:errors] = @user.errors
       render :new
     end
   end

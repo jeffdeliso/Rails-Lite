@@ -14,11 +14,11 @@ class Flash
   end
 
   def [](key)
-    now[key.to_s] || cookie_data[key.to_s]
+    now[key.to_sym] || cookie_data[key.to_sym]
   end
 
   def []=(key, val)
-    cookie_data[key.to_s] = val
+    cookie_data[key.to_sym] = val
   end
   
   # serialize the hash into json and save in a cookie

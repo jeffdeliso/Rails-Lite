@@ -19,7 +19,7 @@ class CatsController < ApplicationController
     if @cat.save
       redirect_to cat_url(@cat)
     else
-      flash.now['errors'] = @cat.errors
+      flash.now[:errors] = @cat.errors
       render :new
     end
   end
@@ -34,7 +34,7 @@ class CatsController < ApplicationController
     if @cat.save
       redirect_to cat_url(@cat)
     else
-      flash.now['errors'] = @cat.errors
+      flash.now[:errors] = @cat.errors
       render :edit
     end
   end

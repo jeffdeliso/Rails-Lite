@@ -8,7 +8,7 @@ module CallBacks
       m = instance_method(name)
       define_method(name) do
         send(method)
-        m.bind(self)
+        m.bind(self).call
       end
     end
   end

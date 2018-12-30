@@ -14,7 +14,7 @@ class SessionsController < ApplicationController
       login(@user)
       redirect_to cats_url
     else
-      flash.now['errors'] = ['invalid username/password']
+      flash.now[:errors] = ['invalid username/password']
       render :new
     end
   end
