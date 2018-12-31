@@ -4,7 +4,7 @@ class Relation
   def initialize(options)
     default = {
       class: options[:table_name].singularize.capitalize.constantize,
-      select: "*",
+      select_line: "*",
       table_name: "",
       where_line: "",
       where_vals: [],
@@ -17,11 +17,10 @@ class Relation
     @where_vals = default[:where_vals]
     @obj_class = default[:class]
     @join_line = default[:join_line]
-    @select_line = default[:select]
+    @select_line = default[:select_line]
   end
 
   def select(*params)
-    p params
     if params.is_a?(Array)
       new_line = select_string(*params)
     else
@@ -46,6 +45,7 @@ class Relation
     else
       self.where_line = "#{where_line} AND #{new_line}"
     end
+    
     self.where_vals = where_vals + new_vals
     self
   end
