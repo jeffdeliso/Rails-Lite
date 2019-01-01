@@ -7,15 +7,13 @@ class User < ApplicationModel
   validates :password, presence: true, length: { min: 6 }, allow_nil: true
   validates :session_token, presence: true, uniqueness: true
 
-  belongs_to :house,
-    class_name: :House,
-    foreign_key: :house_id
+  belongs_to :house
 
   has_many :cats,
-    class_name: :Cat,
     foreign_key: :owner_id
 
-  after_initialize :ensure_token
+  before_validation :ensure_token
+  # after_initialize :ensure_token
   
   attr_reader :password
   

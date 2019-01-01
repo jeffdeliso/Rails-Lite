@@ -91,6 +91,7 @@ module Validations
   end
 
   def valid?
+    before_valid
     self.class.validators.all? { |validator| validator.valid?(self) }
   end
 
