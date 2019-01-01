@@ -54,18 +54,19 @@ class Relation
     result_array = []
     result_hash = Hash.new { |h, k| h[k] = [] }
     join_options = obj_class.assoc_options[assoc]
-    p join_table_name = join_options.table_name
+    join_table_name = join_options.table_name
     join_class = join_options.model_class
-    p joins(join_table_name)
+    left_joins(join_table_name)
     data = query
     obj_params_length = obj_class.columns.length
     # join_params = join_class.columns
     data.each do |el|
       obj = parse_all([el.take(obj_params_length)]).first
-      join_obj = join_class.parse_all([el.drop(obj_params_length)]).first
+      join_arr = el.drop(obj_params_length)
+      join_obj = join_class.parse_all([join_arr]).first
 
       result_array << obj if result_hash[obj.id].empty?
-      result_hash[obj.id] << join_obj
+      result_hash[obj.id] << join_obj unless join_arr.all?(&:nil?)
     end
     [result_array, result_hash]
   end
@@ -81,6 +82,20 @@ class Relation
     end
 
     self.join_line = "JOIN #{join_options.table_name} on #{join_options.table_name}.#{join_table_id} = #{table_name}.#{table_id}"
+    self
+  end
+
+  def left_joins(name)
+    join_options = obj_class.assoc_options.values.find { |options| options.table_name == name.to_s }
+    if join_options.is_a?(BelongsToOptions)
+      table_id = join_options.foreign_key
+      join_table_id = join_options.primary_key
+    else
+      table_id = join_options.primary_key
+      join_table_id = join_options.foreign_key
+    end
+
+    self.join_line = "LEFT OUTER JOIN #{join_options.table_name} on #{join_options.table_name}.#{join_table_id} = #{table_name}.#{table_id}"
     self
   end
 
