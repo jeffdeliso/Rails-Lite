@@ -80,28 +80,34 @@ class Validator
   end
 end
 
+require 'active_support/concern'
+
 module Validations
+extend ActiveSupport::Concern
 
-  def validators
-    @validators ||= []
+
+def valid?
+  before_valid
+  self.class.validators.all? { |validator| validator.valid?(self) }
+end
+
+def errors
+  errors_array = []
+  self.class.validators.each do |validator|
+    errors_array += validator.errors(self)
   end
+  
+  errors_array
+end
 
-  def validates(attribute, options = {})
-    validators << Validator.new(attribute, options)
-  end
-
-  def valid?
-    before_valid
-    self.class.validators.all? { |validator| validator.valid?(self) }
-  end
-
-  def errors
-    errors_array = []
-    self.class.validators.each do |validator|
-      errors_array += validator.errors(self)
+  module ClassMethods
+  
+    def validators
+      @validators ||= []
     end
-
-    errors_array
+    
+    def validates(attribute, options = {})
+      validators << Validator.new(attribute, options)
+    end
   end
-
 end

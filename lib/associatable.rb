@@ -55,8 +55,11 @@ module Associatable
     options = BelongsToOptions.new(name, options)
     assoc_options[name] = options
 
-    self.define_method(name) do 
-      self.class.validates options.foreign_key, presence: true unless options.optional
+    self.define_method(name) do
+      validations = self.class.validators.map { |validator| [validator.attribute, validator.options[:presence]] }
+      unless options.optional || validations.include?([options.foreign_key, true])
+        self.class.validates options.foreign_key, presence: true 
+      end
       options.model_class.find(self.send(options.foreign_key))
     end
   end

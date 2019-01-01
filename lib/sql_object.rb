@@ -9,10 +9,10 @@ require 'active_support/inflector'
 class SQLObject
   extend Searchable
   extend Associatable
-  extend Validations
+  # extend Validations
   include Validations
   include ModelCallbacks
-  extend ModelCallbacks
+  # extend ModelCallbacks
   
   def self.columns
     @columns ||= DBConnection.execute2(<<-SQL)

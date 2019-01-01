@@ -1,6 +1,10 @@
+require 'active_support/concern'
+
 module ModelCallbacks
+  extend ActiveSupport::Concern
+
   def after_init
-    names = after_init_names[self.class]
+    names = self.class.after_init_names[self.class]
     names.each { |name| self.send(name) }
   end
 
@@ -14,25 +18,30 @@ module ModelCallbacks
       end
     end
   end
-
-  def after_initialize(*names)
-    after_init_names[self] += names
-  end
-
-  def before_validation(*names)
-    before_valid_names[self] += names
-  end
-
+  
   def before_valid
-    names = before_valid_names[self.class]
+    names = self.class.before_valid_names[self.class]
     names.each { |name| self.send(name) }
   end
+  
+  
+  module ClassMethods
+    
+    def before_valid_names
+      @@before_valid_names ||= Hash.new { |h, k| h[k] = [] }
+    end
+  
+    def after_init_names
+      @@after_init_names ||= Hash.new { |h, k| h[k] = [] }
+    end
 
-  def before_valid_names
-    @@before_valid_names ||= Hash.new { |h, k| h[k] = [] }
-  end
+    def after_initialize(*names)
+      after_init_names[self] += names
+    end
 
-  def after_init_names
-    @@after_init_names ||= Hash.new { |h, k| h[k] = [] }
+    def before_validation(*names)
+      before_valid_names[self] += names
+    end
+
   end
 end
