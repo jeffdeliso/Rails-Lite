@@ -59,7 +59,6 @@ class Relation
     left_joins(join_table_name)
     data = query
     obj_params_length = obj_class.columns.length
-    # join_params = join_class.columns
     data.each do |el|
       obj = parse_all([el.take(obj_params_length)]).first
       join_arr = el.drop(obj_params_length)

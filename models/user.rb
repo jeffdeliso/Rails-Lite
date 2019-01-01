@@ -1,7 +1,6 @@
 require 'bcrypt'
 
 class User < ApplicationModel
-  # Human.finalize!
   validates :username, presence: true, class: String, uniqueness: true
   validates :password_digest, presence: true
   validates :password, presence: true, length: { min: 6 }, allow_nil: true
@@ -44,6 +43,4 @@ class User < ApplicationModel
   def is_password?(password)
     BCrypt::Password.new(self.password_digest).is_password?(password)
   end
-
-  # after_initialize :ensure_token
 end
