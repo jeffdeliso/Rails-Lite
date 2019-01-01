@@ -1,4 +1,4 @@
-module CallBacks
+module Callbacks
   METHODS = [:index, :create, :new, :edit, :update, :show, :destroy]
 
   def before_action(method, options = { only: METHODS, except: [] })

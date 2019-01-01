@@ -7,7 +7,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    @user.ensure_token
+    # @user.ensure_token
     if @user.save
       login(@user)
       redirect_to  cats_url

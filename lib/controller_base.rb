@@ -8,8 +8,8 @@ require_relative './strong_params'
 require_relative './callbacks'
 
 class ControllerBase
-  include CallBacks
-  extend CallBacks
+  include Callbacks
+  extend Callbacks
 
   attr_reader :req, :res, :params
 
@@ -139,7 +139,7 @@ class ControllerBase
 
   def build_content(&prc)
     directory = File.expand_path(Dir.pwd)
-    path = File.join(directory, 'views', "application_view.html.erb")
+    path = File.join(directory, 'views', "application.html.erb")
     app_content = ERB.new(File.read(path)).result(binding)
   end
   

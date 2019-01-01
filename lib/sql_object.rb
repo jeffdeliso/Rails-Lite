@@ -3,6 +3,7 @@ require_relative 'searchable'
 require_relative 'associatable'
 require_relative 'validations'
 require_relative 'relation'
+require_relative './model_callbacks'
 require 'active_support/inflector'
 
 class SQLObject
@@ -10,6 +11,8 @@ class SQLObject
   extend Associatable
   extend Validations
   include Validations
+  include ModelCallbacks
+  extend ModelCallbacks
   
   def self.columns
     @columns ||= DBConnection.execute2(<<-SQL)

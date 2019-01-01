@@ -15,6 +15,7 @@ class User < ApplicationModel
     class_name: :Cat,
     foreign_key: :owner_id
 
+  after_initialize :ensure_token
   
   attr_reader :password
   
@@ -46,5 +47,5 @@ class User < ApplicationModel
     BCrypt::Password.new(self.password_digest).is_password?(password)
   end
 
-#   after_initialize :ensure_token
+  # after_initialize :ensure_token
 end
