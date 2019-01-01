@@ -128,12 +128,19 @@ class ControllerBase
     unless already_built_response?
       @already_built_response = true
       res['Content-Type'] = content_type
-      res.write(content)
+      app_content = build_content { content }
+      res.write(app_content)
       session.store_session(res)
       flash.store_flash(res)
     else
       raise "Can't render/redirect more than once"
     end
+  end
+
+  def build_content(&prc)
+    directory = File.expand_path(Dir.pwd)
+    path = File.join(directory, 'views', "application_view.html.erb")
+    app_content = ERB.new(File.read(path)).result(binding)
   end
   
   def check_authenticity_token
