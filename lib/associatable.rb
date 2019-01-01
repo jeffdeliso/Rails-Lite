@@ -5,7 +5,8 @@ class AssocOptions
   attr_accessor(
     :foreign_key,
     :class_name,
-    :primary_key
+    :primary_key,
+    :optional
   )
 
   def model_class
@@ -22,7 +23,8 @@ class BelongsToOptions < AssocOptions
     default = {
       foreign_key: "#{name}_id".to_sym,
       class_name: name.to_s.capitalize, 
-      primary_key: :id
+      primary_key: :id,
+      optional: false
     }
     default.merge!(options)
 
@@ -54,6 +56,7 @@ module Associatable
     assoc_options[name] = options
 
     self.define_method(name) do 
+      self.class.validates options.foreign_key, presence: true unless options.optional
       options.model_class.find(self.send(options.foreign_key))
     end
   end

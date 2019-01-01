@@ -3,7 +3,7 @@
 class Cat < ApplicationModel
   # Cat.finalize!
   validates :name, presence: true, class: String, uniqueness: true
-  validates :owner_id, presence: true
+  # validates :owner_id, presence: true
 
   belongs_to :owner,
     class_name: :User

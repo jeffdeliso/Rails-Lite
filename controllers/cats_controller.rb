@@ -10,7 +10,7 @@ class CatsController < ApplicationController
   end
   
   def show
-    @cat = Cat.find(params['id'])
+    current_cat
   end
   
   def create
@@ -24,11 +24,11 @@ class CatsController < ApplicationController
   end
   
   def edit
-    @cat = Cat.find(params['id'])
+    current_cat
   end
   
   def update
-    @cat = Cat.find(params['id'])
+    current_cat
     @cat.update_params(cat_params)
     if @cat.save
       redirect_to cat_url(@cat)
@@ -39,12 +39,15 @@ class CatsController < ApplicationController
   end
   
   def destroy
-    cat = Cat.find(params['id'])
-    cat.destroy
+    current_cat.destroy
     redirect_to cats_url
   end
   
   private
+
+  def current_cat
+    @cat ||= Cat.find(params[:id])
+  end
   
   def cat_params
     params.require(:cat).permit(:name, :owner_id)

@@ -56,6 +56,7 @@ class Relation
     join_options = obj_class.assoc_options[assoc]
     join_table_name = join_options.table_name
     join_class = join_options.model_class
+    
     left_joins(join_table_name)
     data = query
     obj_params_length = obj_class.columns.length
