@@ -12,8 +12,8 @@ class User < ApplicationModel
   has_many :cats,
     foreign_key: :owner_id
 
-  before_validation :ensure_token
-  # after_initialize :ensure_token
+  # before_validation :ensure_token
+  after_initialize :ensure_token
   
   attr_reader :password
   

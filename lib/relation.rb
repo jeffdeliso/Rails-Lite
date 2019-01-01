@@ -21,10 +21,10 @@ class Relation
   end
 
   def select(*params)
-    if params.is_a?(Array)
-      new_line = select_string(*params)
+    if params.length == 1 && params.first.is_a?(String)
+      new_line = params.first
     else
-      new_line = params
+      new_line = select_string(*params)
     end
 
     self.select_line = new_line
@@ -45,20 +45,33 @@ class Relation
     else
       self.where_line = "#{where_line} AND #{new_line}"
     end
-    
+
     self.where_vals = where_vals + new_vals
     self
   end
 
   def includes(assoc)
-    join_table_name = obj_class.assoc_options[assoc]
-    joins(join_table_name)
-    obj1_params = obj_class.columns
-    # TODO
+    result_array = []
+    result_hash = Hash.new { |h, k| h[k] = [] }
+    join_options = obj_class.assoc_options[assoc]
+    p join_table_name = join_options.table_name
+    join_class = join_options.model_class
+    p joins(join_table_name)
+    data = query
+    obj_params_length = obj_class.columns.length
+    # join_params = join_class.columns
+    data.each do |el|
+      obj = parse_all([el.take(obj_params_length)]).first
+      join_obj = join_class.parse_all([el.drop(obj_params_length)]).first
+
+      result_array << obj if result_hash[obj.id].empty?
+      result_hash[obj.id] << join_obj
+    end
+    [result_array, result_hash]
   end
 
   def joins(name)
-    join_options = obj_class.assoc_options.values.find { |options| options.table_name == name }
+    join_options = obj_class.assoc_options.values.find { |options| options.table_name == name.to_s }
     if join_options.is_a?(BelongsToOptions)
       table_id = join_options.foreign_key
       join_table_id = join_options.primary_key

@@ -3,7 +3,7 @@ require_relative 'searchable'
 require_relative 'associatable'
 require_relative 'validations'
 require_relative 'relation'
-require_relative './model_callbacks'
+require_relative 'model_callbacks'
 require 'active_support/inflector'
 
 class SQLObject
@@ -61,7 +61,15 @@ class SQLObject
   end
 
   def self.parse_all(results)
-    results.map do |params|
+    # results.map do |params|
+    #   new(params)
+    # end
+  
+    results.map do |arr|
+      params = {}
+      columns.each_with_index do |column, idx|
+        params[column] = arr[idx]
+      end
       new(params)
     end
   end
@@ -82,16 +90,16 @@ class SQLObject
     self.class.finalize!
 
     params.each do |k, v|
-      # raise "unknown attribute '#{k}'" unless self.class.columns.include?(k.to_sym)
       str = k.to_s + "="
+      raise "unknown attribute '#{k}'" unless self.class.method_defined?(str.to_sym)
       self.send(str, v)
     end
   end
 
   def update_params(params = {})
     params.each do |k, v|
-      raise "unknown attribute '#{k}'" unless self.class.columns.include?(k.to_sym)
       str = k.to_s + "="
+      raise "unknown attribute '#{k}'" unless self.class.method_defined?(str.to_sym)
       self.send(str, v)
     end
   end
@@ -107,7 +115,6 @@ class SQLObject
   def save
     if self.valid?
       id ? update : insert
-
       true
     else
       false
