@@ -3,7 +3,7 @@ require 'bcrypt'
 class User < ApplicationModel
   validates :username, presence: true, class: String, uniqueness: true
   validates :password_digest, presence: true
-  validates :password, presence: true, length: { min: 6 }, allow_nil: true
+  validates :password, length: { minimum: 6 }, allow_nil: true
   validates :session_token, presence: true, uniqueness: true
 
   belongs_to :house
@@ -36,7 +36,7 @@ class User < ApplicationModel
   
   def reset_token!
     self.session_token = User.generate_token
-    self.save
+    self.save!
     self.session_token
   end
   

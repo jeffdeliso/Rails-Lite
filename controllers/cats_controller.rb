@@ -28,9 +28,7 @@ class CatsController < ApplicationController
   end
   
   def update
-    current_cat
-    @cat.update_params(cat_params)
-    if @cat.save
+    if current_cat.update_attributes(cat_params)
       redirect_to cat_url(@cat)
     else
       flash.now[:errors] = @cat.errors

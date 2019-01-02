@@ -73,7 +73,7 @@ module Associatable
       assoc_options[name] = options
     
       self.define_method(name) do 
-        options.model_class.where(options.foreign_key => self.send(options.primary_key))
+        options.model_class.where(options.foreign_key => self.send(options.primary_key)).parsed_query
       end
     end
   end

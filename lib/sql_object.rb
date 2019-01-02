@@ -102,6 +102,12 @@ class SQLObject
       raise "unknown attribute '#{k}'" unless self.class.method_defined?(str.to_sym)
       self.send(str, v)
     end
+    self
+  end
+
+  def update_attributes(params = {})
+    update_params(params)
+    save ? true : false
   end
 
   def attributes
@@ -118,6 +124,15 @@ class SQLObject
       true
     else
       false
+    end
+  end
+
+  def save!
+    if self.valid?
+      id ? update : insert
+      self
+    else
+      raise self.errors.join(", ")
     end
   end
   

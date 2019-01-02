@@ -1,6 +1,14 @@
 class UsersController < ApplicationController
   protect_from_forgery
 
+  def index
+    @users = User.all
+  end
+
+  def show
+    @user = User.find(params[:id])
+  end
+
   def new
     @user = User.new
   end
@@ -15,6 +23,12 @@ class UsersController < ApplicationController
       flash.now[:errors] = @user.errors
       render :new
     end
+  end
+
+  def destroy
+    user = User.find(params[:id])
+    user.destroy
+    redirect_to users_url
   end
 
   private

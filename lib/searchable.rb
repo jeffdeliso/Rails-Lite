@@ -30,13 +30,19 @@ module Searchable
     relation.joins(table_name)
   end
 
+  def left_joins(table_name)
+    relation = Relation.new(table_name: self.table_name)
+    relation.left_joins(table_name)
+  end
+
   def select(*params)
     relation = Relation.new(table_name: self.table_name)
     relation.select(*params)
   end
 
   def find_by(params)
-    where(params).first
+    arr = where(params)
+    arr.empty? ? nil : arr.first
   end
   
   # private
