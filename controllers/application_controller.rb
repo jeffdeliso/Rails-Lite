@@ -16,6 +16,16 @@ class ApplicationController < ControllerBase
     end
   end
 
+  def ensure_logout
+    if logged_in?
+      flash[:errors] = ['already logged in']
+      redirect_to cats_url
+      true
+    else
+      false
+    end
+  end
+
   def login(user)
     @current_user = user
     session[:session_token] = user.reset_token!

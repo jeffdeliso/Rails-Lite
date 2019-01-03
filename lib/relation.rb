@@ -121,13 +121,12 @@ class Relation
     result
   end
   
-  def parse_all(results)
-    obj_class.parse_all(results)
-  end
-  
   private
   attr_writer :where_line, :where_vals, :join_line, :select_line
   
+  def parse_all(results)
+    obj_class.parse_all(results)
+  end
 
   def params_string(params)
     params.keys.map { |key| "#{table_name}.#{key} = ?" }.join(" AND ")

@@ -9,10 +9,8 @@ require 'active_support/inflector'
 class SQLObject
   extend Searchable
   extend Associatable
-  # extend Validations
   include Validations
   include ModelCallbacks
-  # extend ModelCallbacks
   
   def self.columns
     @columns ||= DBConnection.execute2(<<-SQL)
@@ -61,10 +59,6 @@ class SQLObject
   end
 
   def self.parse_all(results)
-    # results.map do |params|
-    #   new(params)
-    # end
-  
     results.map do |arr|
       params = {}
       columns.each_with_index do |column, idx|
@@ -96,7 +90,7 @@ class SQLObject
     end
   end
 
-  def update_params(params = {})
+  def update(params = {})
     params.each do |k, v|
       str = k.to_s + "="
       raise "unknown attribute '#{k}'" unless self.class.method_defined?(str.to_sym)
@@ -106,7 +100,7 @@ class SQLObject
   end
 
   def update_attributes(params = {})
-    update_params(params)
+    update(params)
     save ? true : false
   end
 
@@ -120,7 +114,7 @@ class SQLObject
 
   def save
     if self.valid?
-      id ? update : insert
+      id ? update_database : insert
       true
     else
       false
@@ -129,7 +123,7 @@ class SQLObject
 
   def save!
     if self.valid?
-      id ? update : insert
+      id ? update_database : insert
       self
     else
       raise self.errors.join(", ")
@@ -161,7 +155,7 @@ class SQLObject
     self.id = DBConnection.last_insert_row_id
   end
   
-  def update
+  def update_database
     DBConnection.instance.execute(<<-SQL, *attribute_values, id)
       UPDATE
         #{self.class.table_name}

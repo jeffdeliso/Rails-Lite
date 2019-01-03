@@ -15,7 +15,6 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    # @user.ensure_token
     if @user.save
       login(@user)
       redirect_to  cats_url
@@ -36,4 +35,7 @@ class UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:username, :password)
   end
+
+  before_action :ensure_logout, only: [:new, :create]
+  before_action :ensure_login, only: [:index, :show, :destroy]
 end

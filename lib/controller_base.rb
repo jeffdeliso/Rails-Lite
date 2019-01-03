@@ -8,7 +8,6 @@ require_relative './strong_params'
 require_relative './callbacks'
 
 class ControllerBase
-  # include Callbacks
   extend Callbacks
 
   attr_reader :req, :res, :params

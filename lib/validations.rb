@@ -40,7 +40,7 @@ class Validator
 
   def length(_obj, val, errors_array)
     if val.nil?
-      errors_array << "#{attribute} can't be nil"
+      errors_array << "#{attribute} can't be nil" unless options[:length][:allow_nil]
 
       return errors_array
     elsif options[:length].is_a?(Hash)
@@ -84,7 +84,6 @@ require 'active_support/concern'
 
 module Validations
 extend ActiveSupport::Concern
-
 
 def valid?
   before_valid
