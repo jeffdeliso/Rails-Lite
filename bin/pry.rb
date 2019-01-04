@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 require 'rack'
 require_relative '../lib/router'
 require_relative '../models/application_model'
