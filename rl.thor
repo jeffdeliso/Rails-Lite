@@ -1,16 +1,14 @@
 require 'thor'
 require 'rack'
 require 'pry'
-require_relative './lib/router'
+require 'byebug'
+require_relative './lib/router/router'
 require_relative './config/routes'
-require_relative './app/models/application_model'
-require_relative './app/models/cat'
-require_relative './app/models/user'
-require_relative './app/models/house'
-require_relative './app/controllers/application_controller'
-require_relative './app/controllers/cats_controller'
-require_relative './app/controllers/users_controller'
-require_relative './app/controllers/sessions_controller'
+require_relative './lib/middleware/show_exceptions'
+require_relative './lib/middleware/static'
+Dir[File.join(__dir__, 'app', 'controllers', '*.rb')].each { |file| require file }
+Dir[File.join(__dir__, 'app', 'models', '*.rb')].each { |file| require file }
+
 
   class RL < Thor
     
@@ -26,6 +24,12 @@ require_relative './app/controllers/sessions_controller'
         router.run(req, res)
         res.finish
       end
+
+      app = Rack::Builder.new do
+        use ShowExceptions
+        use Static
+        run app
+      end.to_app
 
       Rack::Server.start(
       app: app,

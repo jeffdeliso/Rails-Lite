@@ -21,31 +21,9 @@ class ControllerBase
       url_arr = pattern.inspect.delete('\^$?<>/+()').split('\\').drop(1).reject { |el| el == "d"}
 
       unless url_arr.include?("id")
-        helper_name = url_arr.reverse.join("_")
-        helper_name += "_url"
-        url = url_arr.join("/")
-        url = "/" + url
-        define_method(helper_name) do
-          url
-        end
+        make_idless_helpers(url_arr)
       else
-        name_arr = url_arr.dup
-        name_arr[0] = url_arr.first.singularize
-        helper_name = name_arr.reject { |el| el == "id"}.reverse.join("_")
-        helper_name += "_url"
-
-        define_method(helper_name) do |id|
-          obj_id = id.try(:id)
-          url = url_arr.map do |el|
-            if el == "id"
-              "#{obj_id || id}"
-            else
-              el
-            end
-          end
-          
-          "/" + url.join("/")
-        end
+        make_id_helpers(url_arr)
       end
     end
   end
@@ -115,6 +93,36 @@ class ControllerBase
   end
   
   private
+
+  def self.make_idless_helpers(url_arr)
+    helper_name = url_arr.reverse.join("_")
+    helper_name += "_url"
+    url = url_arr.join("/")
+    url = "/" + url
+    define_method(helper_name) do
+      url
+    end
+  end
+
+  def self.make_id_helpers(url_arr)
+    name_arr = url_arr.dup
+    name_arr[0] = url_arr.first.singularize
+    helper_name = name_arr.reject { |el| el == "id"}.reverse.join("_")
+    helper_name += "_url"
+
+    define_method(helper_name) do |id|
+      obj_id = id.try(:id)
+      url = url_arr.map do |el|
+        if el == "id"
+          "#{obj_id || id}"
+        else
+          el
+        end
+      end
+      
+      "/" + url.join("/")
+    end
+  end
   # Helper method to alias @already_built_response
   def already_built_response?
     @already_built_response
