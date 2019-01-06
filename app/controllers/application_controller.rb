@@ -29,7 +29,6 @@ class ApplicationController < ControllerBase
   def login(user)
     @current_user = user
     session[:session_token] = user.reset_token!
-    session[:session_token]
   end
 
   def logout
