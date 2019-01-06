@@ -43,6 +43,7 @@ class Validator
 
       return errors_array
     elsif options[:length].is_a?(Hash)
+
       min = options[:length][:minimum]
       if min && val.length < min
         errors_array << "#{attribute} must be longer than #{min} characters"
@@ -77,5 +78,4 @@ class Validator
 
     errors_array
   end
-  
 end

@@ -2,6 +2,7 @@ require_relative 'file_server'
 
 class Static
   attr_reader :app, :root, :file_server
+  
   def initialize(app)
     @app = app
     @root = :public

@@ -27,6 +27,5 @@ module Validations
     def validates(attribute, options = {})
       validators << Validator.new(attribute, options)
     end
-
   end
 end

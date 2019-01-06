@@ -1,4 +1,5 @@
 require 'json'
+require_relative 'flash_now'
 
 class Flash
   attr_reader :now
@@ -10,6 +11,7 @@ class Flash
     else
       @now = FlashNow.new
     end
+    
     @cookie_data = {}
   end
 
@@ -21,8 +23,6 @@ class Flash
     cookie_data[key.to_s] = val
   end
   
-  # serialize the hash into json and save in a cookie
-  # add to the responses cookies
   def store_flash(res)
     cookie = { path: '/', value: JSON.generate(cookie_data) }
     res.set_cookie('_rails_lite_app_flash', cookie)
@@ -30,20 +30,4 @@ class Flash
 
   private
   attr_reader :cookie_data
-end
-
-class FlashNow
-  attr_reader :hash
-
-  def initialize(hash = {})
-    @hash = hash
-  end
-
-  def [](key)
-    hash[key.to_s]
-  end
-
-  def []=(key, val)
-    hash[key.to_s] = val
-  end
 end

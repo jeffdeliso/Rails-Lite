@@ -42,6 +42,5 @@ module ModelCallbacks
     def before_validation(*names)
       before_valid_names[self] += names
     end
-
   end
 end

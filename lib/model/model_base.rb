@@ -1,10 +1,10 @@
+require 'active_support/inflector'
 require_relative './db_connection'
 require_relative './relations/searchable'
 require_relative './associations/associatable'
 require_relative './validations/validations'
 require_relative './relations/relation'
 require_relative './model_callbacks'
-require 'active_support/inflector'
 
 class ModelBase
   extend Searchable
@@ -41,7 +41,7 @@ class ModelBase
   end
 
   def self.table_name
-    @table_name ||= self.to_s.downcase.pluralize
+    @table_name ||= self.name.underscore.pluralize
   end
 
   def self.all
@@ -64,7 +64,8 @@ class ModelBase
       columns.each_with_index do |column, idx|
         params[column] = arr[idx]
       end
-      new(params)
+
+      self.new(params)
     end
   end
 
@@ -73,29 +74,31 @@ class ModelBase
       Select 
         * 
       FROM 
-        '#{table_name}' 
+        #{table_name}
       WHERE 
         id = ?
     SQL
+
     parse_all(results).first
   end
 
   def initialize(params = {})
     self.class.finalize!
 
-    params.each do |k, v|
-      str = k.to_s + "="
-      raise "unknown attribute '#{k}'" unless self.class.method_defined?(str.to_sym)
-      self.send(str, v)
+    params.each do |attribute, val|
+      setter = attribute.to_s + "="
+      raise "Unknown attribute '#{k}'" unless self.class.method_defined?(setter.to_sym)
+      self.send(setter, val)
     end
   end
 
   def update(params = {})
-    params.each do |k, v|
-      str = k.to_s + "="
-      raise "unknown attribute '#{k}'" unless self.class.method_defined?(str.to_sym)
-      self.send(str, v)
+    params.each do |attribute, val|
+      setter = attribute.to_s + "="
+      raise "Unknown attribute '#{k}'" unless self.class.method_defined?(setter.to_sym)
+      self.send(setter, val)
     end
+
     self
   end
 
@@ -140,10 +143,8 @@ class ModelBase
     SQL
   end
 
-
   private
   
-
   def insert
     raise "#{self} already in database" if self.id
     DBConnection.execute(<<-SQL, *attribute_values)
@@ -152,6 +153,7 @@ class ModelBase
       VALUES
         (#{question_marks})
     SQL
+    
     self.id = DBConnection.last_insert_row_id
   end
   

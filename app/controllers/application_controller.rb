@@ -10,6 +10,7 @@ class ApplicationController < ControllerBase
     unless logged_in?
       flash[:errors] = ['must be logged in']
       redirect_to new_sessions_url
+      
       true
     else
       false
@@ -20,6 +21,7 @@ class ApplicationController < ControllerBase
     if logged_in?
       flash[:errors] = ['already logged in']
       redirect_to cats_url
+
       true
     else
       false

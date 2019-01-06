@@ -8,7 +8,9 @@ module Associatable
     assoc_options[name] = options
 
     self.define_method(name) do
-      validations = self.class.validators.map { |validator| [validator.attribute, validator.options[:presence]] }
+      validations = self.class.validators
+        .map { |validator| [validator.attribute, validator.options[:presence]] }
+
       unless options.optional || validations.include?([options.foreign_key, true])
         self.class.validates options.foreign_key, presence: true 
       end
@@ -21,7 +23,7 @@ module Associatable
     if options[:through] && options[:source]
       has_many_through(name, options[:through], options[:source])
     else
-      options = HasManyOptions.new(name, self.to_s, options)
+      options = HasManyOptions.new(name, self.name, options)
       assoc_options[name] = options
     
       self.define_method(name) do 
@@ -38,6 +40,7 @@ module Associatable
   def has_one(name, options)
     through_name = options[:through]
     source_name = options[:source]
+
     define_method(name) do
       through_options = self.class.assoc_options[through_name]
       source_options = through_options.model_class.assoc_options[source_name]

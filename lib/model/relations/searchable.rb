@@ -24,5 +24,4 @@ module Searchable
     arr = where(params)
     arr.empty? ? nil : arr.first
   end
-  
 end

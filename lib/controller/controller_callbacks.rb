@@ -1,4 +1,4 @@
-module Callbacks
+module ControllerCallbacks
   METHODS = [:index, :create, :new, :edit, :update, :show, :destroy]
 
   def before_action(method, options = { only: METHODS, except: [] })

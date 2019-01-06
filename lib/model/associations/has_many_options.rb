@@ -14,5 +14,4 @@ class HasManyOptions < AssocOptions
     @class_name = default[:class_name]
     @primary_key = default[:primary_key]
   end
-
 end

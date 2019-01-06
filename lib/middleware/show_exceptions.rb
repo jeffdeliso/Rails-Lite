@@ -25,12 +25,12 @@ class ShowExceptions
   end
 
   def error_source_file(e)
-    stack_trace_top = e.backtrace.first.split(':')
+    # stack_trace_top = e.backtrace.first.split(':')
     stack_trace_top(e)[0]
   end
 
   def stack_trace_top(e)
-    e.backtrace[0].split(':')
+    e.backtrace.first.split(':')
   end
 
   def extract_formatted_source(e)

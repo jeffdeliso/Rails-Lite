@@ -1,5 +1,12 @@
 class Relation
-  attr_reader :where_line, :obj_class, :where_vals, :table_name, :join_line, :select_line
+  attr_reader(
+    :where_line,
+    :obj_class,
+    :where_vals,
+    :table_name,
+    :join_line,
+    :select_line
+  )
 
   def initialize(options)
     default = {
@@ -10,8 +17,8 @@ class Relation
       where_vals: [],
       join_line: ""
     }
-    default.merge!(options)
 
+    default.merge!(options)
     @table_name = default[:table_name]
     @where_line = default[:where_line]
     @where_vals = default[:where_vals]
@@ -60,6 +67,7 @@ class Relation
     left_joins(join_table_name)
     data = query
     obj_params_length = obj_class.columns.length
+
     data.each do |el|
       obj = parse_all([el.take(obj_params_length)]).first
       join_arr = el.drop(obj_params_length)
@@ -68,11 +76,14 @@ class Relation
       result_array << obj if result_hash[obj.id].empty?
       result_hash[obj.id] << join_obj unless join_arr.all?(&:nil?)
     end
+
     [result_array, result_hash]
   end
 
   def joins(name)
-    join_options = obj_class.assoc_options.values.find { |options| options.table_name == name.to_s }
+    join_options = obj_class.assoc_options.values
+      .find { |options| options.table_name == name.to_s }
+
     if join_options.is_a?(BelongsToOptions)
       table_id = join_options.foreign_key
       join_table_id = join_options.primary_key
@@ -86,7 +97,9 @@ class Relation
   end
 
   def left_joins(name)
-    join_options = obj_class.assoc_options.values.find { |options| options.table_name == name.to_s }
+    join_options = obj_class.assoc_options.values
+      .find { |options| options.table_name == name.to_s }
+      
     if join_options.is_a?(BelongsToOptions)
       table_id = join_options.foreign_key
       join_table_id = join_options.primary_key

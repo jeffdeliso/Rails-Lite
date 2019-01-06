@@ -4,7 +4,7 @@ class StrongParams
   def self.to_sym(hash)
     sym_hash = {}
     hash.each do |key, val|
-      sym_hash[key.to_sym] = val.is_a?(Hash) ? to_sym(val) : val
+      sym_hash[key.to_sym] = (val.is_a?(Hash) ? to_sym(val) : val)
     end
 
     sym_hash
@@ -37,5 +37,4 @@ class StrongParams
   def []=(key, val)
     params[key.to_sym] = val
   end
-  
 end
