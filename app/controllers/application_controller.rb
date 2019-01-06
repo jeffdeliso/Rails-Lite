@@ -1,4 +1,4 @@
-require_relative '../lib/controller_base'
+require_relative '../../lib/controller/controller_base'
 
 class ApplicationController < ControllerBase
 
