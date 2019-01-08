@@ -33,6 +33,29 @@ class Router
     routes.find { |route| route.matches?(req) }
   end
 
+  def resources(name, options = {})
+    controller_class = "#{name.capitalize}Controller".constantize
+    methods = [:index, :create, :new, :edit, :update, :show, :destroy]
+    patterns = {
+      index: [Regexp.new("^/#{name}/?$"), :get],
+      new: [Regexp.new("^/#{name}/new/?$"), :get],
+      show: [Regexp.new("^/#{name}/(?<id>\\d+)/?$"), :get],
+      create: [Regexp.new("^/#{name}$"), :post],
+      destroy: [Regexp.new("^/#{name}/(?<id>\\d+)/?$"), :delete],
+      update: [Regexp.new("^/#{name}/(?<id>\\d+)/?$"), :patch],
+      edit: [Regexp.new("^/#{name}/(?<id>\\d+)/edit/?$"), :get]
+    }
+    
+    default = { only: methods, except: [] }
+    default.merge!(options)
+    names = default[:only] - default[:except]
+
+    names.each do |name|
+      params = patterns[name] + [controller_class] + [name]
+      add_route(*params)
+    end
+  end
+
   # either throw 404 or call run on a matched route
   def run(req, res)
     route = match(req)
