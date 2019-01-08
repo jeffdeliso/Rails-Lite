@@ -9,11 +9,11 @@ def create_routes(router)
     # patch Regexp.new("^/cats/(?<id>\\d+)/?$"), CatsController, :update
     # get Regexp.new("^/cats/(?<id>\\d+)/edit/?$"), CatsController, :edit
 
-    get Regexp.new("^/users/?$"), UsersController, :index
-    get Regexp.new("^/users/(?<id>\\d+)/?$"), UsersController, :show
-    get Regexp.new("^/users/new/?$"), UsersController, :new
-    post Regexp.new("^/users/?$"), UsersController, :create
-    delete Regexp.new("^/users/(?<id>\\d+)/?$"), UsersController, :destroy
+    # get Regexp.new("^/users/?$"), UsersController, :index
+    # get Regexp.new("^/users/(?<id>\\d+)/?$"), UsersController, :show
+    # get Regexp.new("^/users/new/?$"), UsersController, :new
+    # post Regexp.new("^/users/?$"), UsersController, :create
+    # delete Regexp.new("^/users/(?<id>\\d+)/?$"), UsersController, :destroy
 
     # get Regexp.new("^/sessions/new/?$"), SessionsController, :new
     # post Regexp.new("^/sessions/?$"), SessionsController, :create
@@ -21,7 +21,7 @@ def create_routes(router)
     # debugger
 
     resources :cats
-    resources :users, except: [:edit, :patch]
-    resources :sessions, only: [:new, :create, :destroy]
+    resources :users, except: [:edit, :update]
+    resource :sessions, only: [:new, :create, :destroy]
   end
 end

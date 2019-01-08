@@ -10,7 +10,7 @@ class Router
 
   # simply adds a new route to the list of routes
   def add_route(pattern, method, controller_class, action_name)
-    routes << Route.new(pattern, method, controller_class, action_name)
+    p routes << Route.new(pattern, method, controller_class, action_name)
     patterns << pattern unless patterns.include?(pattern)
   end
 
@@ -44,6 +44,29 @@ class Router
       destroy: [Regexp.new("^/#{name}/(?<id>\\d+)/?$"), :delete],
       update: [Regexp.new("^/#{name}/(?<id>\\d+)/?$"), :patch],
       edit: [Regexp.new("^/#{name}/(?<id>\\d+)/edit/?$"), :get]
+    }
+    
+    default = { only: methods, except: [] }
+    default.merge!(options)
+    names = default[:only] - default[:except]
+
+    names.each do |name|
+      params = patterns[name] + [controller_class] + [name]
+      add_route(*params)
+    end
+  end
+
+  def resource(name, options = {})
+    controller_class = "#{name.capitalize}Controller".constantize
+    methods = [:index, :create, :new, :edit, :update, :show, :destroy]
+    patterns = {
+      index: [Regexp.new("^/#{name}/?$"), :get],
+      new: [Regexp.new("^/#{name}/new/?$"), :get],
+      show: [Regexp.new("^/#{name}/?$"), :get],
+      create: [Regexp.new("^/#{name}$"), :post],
+      destroy: [Regexp.new("^/#{name}/?$"), :delete],
+      update: [Regexp.new("^/#{name}/?$"), :patch],
+      edit: [Regexp.new("^/#{name}/edit/?$"), :get]
     }
     
     default = { only: methods, except: [] }
