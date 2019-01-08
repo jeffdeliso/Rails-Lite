@@ -8,27 +8,21 @@ class Router
     @patterns = []
   end
 
-  # simply adds a new route to the list of routes
   def add_route(pattern, method, controller_class, action_name)
-    p routes << Route.new(pattern, method, controller_class, action_name)
+    routes << Route.new(pattern, method, controller_class, action_name)
     patterns << pattern unless patterns.include?(pattern)
   end
 
-  # evaluate the proc in the context of the instance
-  # for syntactic sugar :)
   def draw(&proc)
     self.instance_eval(&proc)
   end
 
-  # make each of these methods that
-  # when called add route
   [:get, :post, :patch, :delete, :put].each do |http_method|
     define_method(http_method) do |pattern, controller_class, action_name|
       add_route(pattern, http_method, controller_class, action_name)
     end
   end
 
-  # should return the route that matches this request
   def match(req)
     routes.find { |route| route.matches?(req) }
   end
@@ -79,7 +73,16 @@ class Router
     end
   end
 
-  # either throw 404 or call run on a matched route
+  def root(options = {})
+    to_array = options[:to].split('#')
+    pattern = Regexp.new("^/?$")
+    http_method = :get
+    controller_class = "#{to_array[0].capitalize}Controller".constantize
+    action_name = to_array[1].to_sym
+
+    add_route(pattern, http_method, controller_class, action_name)
+  end
+
   def run(req, res)
     route = match(req)
     if route

@@ -1,6 +1,6 @@
 def create_routes(router)
   router.draw do
-    get Regexp.new("^/?$"), CatsController, :index
+    # get Regexp.new("^/?$"), CatsController, :index
     # get Regexp.new("^/cats/?$"), CatsController, :index
     # get Regexp.new("^/cats/new/?$"), CatsController, :new
     # get Regexp.new("^/cats/(?<id>\\d+)/?$"), CatsController, :show
@@ -19,7 +19,7 @@ def create_routes(router)
     # post Regexp.new("^/sessions/?$"), SessionsController, :create
     # delete Regexp.new("^/sessions/?$"), SessionsController, :destroy
     # debugger
-
+    root to: 'cats#index'
     resources :cats
     resources :users, except: [:edit, :update]
     resource :sessions, only: [:new, :create, :destroy]
