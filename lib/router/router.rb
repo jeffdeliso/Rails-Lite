@@ -92,5 +92,4 @@ class Router
       res.write('Route not found')
     end
   end
-  
 end

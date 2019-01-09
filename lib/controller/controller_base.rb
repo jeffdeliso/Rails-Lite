@@ -53,7 +53,7 @@ class ControllerBase
   def form_authenticity_token
     @form_authenticity_token ||= SecureRandom::urlsafe_base64
     cookie = { path: '/', value: @form_authenticity_token }
-    res.set_cookie('authenticity_token', cookie)
+    res.set_cookie("#{@form_authenticity_token[0..5]}authenticity_token", cookie)
     @form_authenticity_token
   end
 
@@ -157,8 +157,8 @@ class ControllerBase
   end
   
   def check_authenticity_token
-    cookie = req.cookies["authenticity_token"]
     param_token = params['authenticity_token']
+    cookie = req.cookies["#{param_token[0..5]}authenticity_token"]
     unless param_token && cookie == param_token
       raise 'Invalid authenticity token'
     end
