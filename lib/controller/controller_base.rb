@@ -46,7 +46,7 @@ class ControllerBase
     
     self.send(name)
     render name unless already_built_response?
-
+    
     nil
   end
   
@@ -56,19 +56,19 @@ class ControllerBase
     res.set_cookie("#{@form_authenticity_token[0..5]}authenticity_token", cookie)
     @form_authenticity_token
   end
-
+  
   def link_to(name, path)
     "<a href=\"#{path}\">#{name}</a>"
   end
   
   protected
-
+  
   def redirect_to(url)
     prepare_render_or_redirect
-
+    
     res.status = 302
     res['Location'] = url
-
+    
     nil
   end
   
@@ -79,28 +79,32 @@ class ControllerBase
       directory, "..", '..',
       'app', 'views', controller_name,
       "#{template_name}.html.erb"
-    )
+      )
+      
+      content = ERB.new(File.read(path)).result(binding)
+      render_content(content, 'text/html')
+    end
+    
+    def session
+      @session ||= Session.new(req)
+    end
+    
+    def flash
+      @flash ||= Flash.new(req)
+    end
+    
+    def root_url
+      '/'
+    end
 
-    content = ERB.new(File.read(path)).result(binding)
-    render_content(content, 'text/html')
-  end
- 
-  def session
-    @session ||= Session.new(req)
-  end
-  
-  def flash
-    @flash ||= Flash.new(req)
-  end
-  
-  private
-
-  def self.make_idless_helpers(url_arr)
-    helper_name = url_arr.reverse.join("_")
-    helper_name += "_url"
-    url = url_arr.join("/")
-    url = "/" + url
-    define_method(helper_name) do
+    private
+    
+    def self.make_idless_helpers(url_arr)
+      helper_name = url_arr.reverse.join("_")
+      helper_name += "_url"
+      url = url_arr.join("/")
+      url = "/" + url
+      define_method(helper_name) do
       url
     end
   end

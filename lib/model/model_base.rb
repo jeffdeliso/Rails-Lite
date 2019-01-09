@@ -151,10 +151,10 @@ class ModelBase
       INSERT INTO
         #{self.class.table_name} (#{column_names})
       VALUES
-        (#{question_marks})
+        (#{question_marks});
     SQL
     
-    self.id = DBConnection.last_insert_row_id
+    self.id = DBConnection.execute("SELECT MAX(id) FROM #{self.class.table_name}").first.first
   end
   
   def update_database
