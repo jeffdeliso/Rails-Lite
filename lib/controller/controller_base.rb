@@ -2,6 +2,7 @@ require 'active_support'
 require 'active_support/core_ext'
 require 'erb'
 require 'active_support/inflector'
+require 'json'
 require_relative './cookies/session'
 require_relative './cookies/flash'
 require_relative './strong_params'
@@ -71,40 +72,55 @@ class ControllerBase
     
     nil
   end
+
+  def render(options)
+    if options.is_a?(Symbol)
+      render_template(options)
+    else
+      render_json(options[:json])
+    end
+  end
+
   
-  def render(template_name)
+  def session
+    @session ||= Session.new(req)
+  end
+  
+  def flash
+    @flash ||= Flash.new(req)
+  end
+  
+  def root_url
+    '/'
+  end
+  
+  private
+
+  def render_json(obj)
+    content = obj.attributes.to_json
+    render_content(content, 'application/json')
+  end
+
+  def render_template(template_name)
     directory = File.dirname(__FILE__)
     controller_name = self.class.to_s.underscore
     path = File.join(
       directory, "..", '..',
       'app', 'views', controller_name,
       "#{template_name}.html.erb"
-      )
+    )
       
-      content = ERB.new(File.read(path)).result(binding)
-      render_content(content, 'text/html')
-    end
-    
-    def session
-      @session ||= Session.new(req)
-    end
-    
-    def flash
-      @flash ||= Flash.new(req)
-    end
-    
-    def root_url
-      '/'
-    end
+    content = ERB.new(File.read(path)).result(binding)
+    app_content = build_content { content }
+    render_content(app_content, 'text/html')
+  end
 
-    private
-    
-    def self.make_idless_helpers(url_arr)
-      helper_name = url_arr.reverse.join("_")
-      helper_name += "_url"
-      url = url_arr.join("/")
-      url = "/" + url
-      define_method(helper_name) do
+  def self.make_idless_helpers(url_arr)
+    helper_name = url_arr.reverse.join("_")
+    helper_name += "_url"
+    url = url_arr.join("/")
+    url = "/" + url
+    define_method(helper_name) do
       url
     end
   end
@@ -124,7 +140,7 @@ class ControllerBase
           el
         end
       end
-      
+        
       "/" + url.join("/")
     end
   end
@@ -137,9 +153,8 @@ class ControllerBase
     prepare_render_or_redirect
 
     res['Content-Type'] = content_type
-    app_content = build_content { content }
-    res.write(app_content)
-
+    # app_content = build_content { content }
+    res.write(content)
     nil
   end
 
