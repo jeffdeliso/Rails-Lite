@@ -47,7 +47,7 @@ class DBConnection
   private
 
   def self.print_query(query, *interpolation_args)
-    # return unless PRINT_QUERIES
+    return unless PRINT_QUERIES
 
     puts '--------------------'
     puts query

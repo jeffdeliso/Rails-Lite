@@ -10,6 +10,7 @@ class CatsController < ApplicationController
   end
   
   def show
+    # current_cat
     render json: current_cat
   end
   

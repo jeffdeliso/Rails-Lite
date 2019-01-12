@@ -22,10 +22,12 @@ class ControllerBase
       url_arr = pattern.inspect.delete('\^$?<>/+()')
         .split('\\').drop(1).reject { |el| el == "d"}
 
-      unless url_arr.include?("id")
-        make_idless_helpers(url_arr)
-      else
+      if url_arr.any? { |str| str.include?("_id") }
+        
+      elsif url_arr.include?("id")
         make_id_helpers(url_arr)
+      else
+        make_idless_helpers(url_arr)
       end
     end
   end
@@ -62,6 +64,10 @@ class ControllerBase
     "<a href=\"#{path}\">#{name}</a>"
   end
   
+  def root_url
+    '/'
+  end
+
   protected
   
   def redirect_to(url)
@@ -81,17 +87,12 @@ class ControllerBase
     end
   end
 
-  
   def session
     @session ||= Session.new(req)
   end
   
   def flash
     @flash ||= Flash.new(req)
-  end
-  
-  def root_url
-    '/'
   end
   
   private
