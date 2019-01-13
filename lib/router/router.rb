@@ -41,11 +41,25 @@ class Router
       default = { to: "#{current_class}##{name}" }
       default.merge!(options)
 
+      if name.is_a?(Symbol)
+        pattern = Regexp.new("#{current_route}#{name}/?$")
+      elsif name.is_a?(String)
+        url_arr = Router.make_url_arr_from_path(name)
+        url_arr.map! do |str|
+          if str[0] === ":"
+            "(?<#{str[1..-1]}>\\d+)"
+          else
+            str
+          end
+        end
+
+        path = url_arr.join("/")
+        pattern = Regexp.new("^/#{path}/?$")
+      end
+      
       to_array = default[:to].split('#')
-      pattern = Regexp.new("#{current_route}#{name}/?$")
       controller_class = "#{to_array[0].capitalize}Controller".constantize
       action_name = to_array[1].to_sym
-
       add_route(pattern, http_method, controller_class, action_name)
     end
   end
@@ -81,7 +95,6 @@ class Router
     prc.call if prc
     reset_routes
 
-    display_routes
     nil
   end
 

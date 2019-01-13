@@ -3,15 +3,15 @@ require 'active_support/concern'
 module UrlHelpers
   extend ActiveSupport::Concern
 
-  def display_routes(routes)
-
-  end
-
   module ClassMethods
 
     def make_url_arr(pattern)
       pattern.inspect.delete('\^$?<>/+()')
           .split('\\').drop(1).reject { |el| el == "d"}
+    end
+
+    def make_url_arr_from_path(path)
+      path.split("/").drop(1)
     end
 
     def make_url(pattern)
@@ -31,6 +31,8 @@ module UrlHelpers
 
     def make_helper_name(pattern)
       url_arr = make_url_arr(pattern)
+      return "root_url" if url_arr.empty?
+
       if url_arr.include?("id") ||  url_arr.any? { |str| str.include?("_id") }
         make_id_helper_name(url_arr)
       else
