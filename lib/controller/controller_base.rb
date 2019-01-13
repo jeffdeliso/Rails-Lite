@@ -7,9 +7,11 @@ require_relative './cookies/session'
 require_relative './cookies/flash'
 require_relative './strong_params'
 require_relative './controller_callbacks'
+require_relative '../utils/url_helpers'
 
 class ControllerBase
   extend ControllerCallbacks
+  include UrlHelpers
 
   attr_reader :req, :res, :params
 
@@ -17,20 +19,18 @@ class ControllerBase
     @@protect_from_forgery = true
   end
 
-  def self.make_helpers(patterns)
-    patterns.each do |pattern|
-      url_arr = pattern.inspect.delete('\^$?<>/+()')
-        .split('\\').drop(1).reject { |el| el == "d"}
+  # def self.make_helpers(patterns)
+  #   patterns.each do |pattern|
+  #     url_arr = pattern.inspect.delete('\^$?<>/+()')
+  #       .split('\\').drop(1).reject { |el| el == "d"}
 
-      if url_arr.any? { |str| str.include?("_id") }
-        
-      elsif url_arr.include?("id")
-        make_id_helpers(url_arr)
-      else
-        make_idless_helpers(url_arr)
-      end
-    end
-  end
+  #     if url_arr.include?("id") ||  url_arr.any? { |str| str.include?("_id") }
+  #       make_id_helpers(url_arr)
+  #     else
+  #       make_idless_helpers(url_arr)
+  #     end
+  #   end
+  # end
 
   def initialize(req, res, route_params = {}, patterns)
     @req = req
@@ -116,35 +116,48 @@ class ControllerBase
     render_content(app_content, 'text/html')
   end
 
-  def self.make_idless_helpers(url_arr)
-    helper_name = url_arr.reverse.join("_")
-    helper_name += "_url"
-    url = url_arr.join("/")
-    url = "/" + url
-    define_method(helper_name) do
-      url
-    end
-  end
+  # def self.make_idless_helpers(url_arr)
+  #   if url_arr.last == "edit" || url_arr.last == "new"
+  #     url_arr.unshift(url_arr.pop) 
+  #   end
 
-  def self.make_id_helpers(url_arr)
-    name_arr = url_arr.dup
-    name_arr[0] = url_arr.first.singularize
-    helper_name = name_arr.reject { |el| el == "id"}.reverse.join("_")
-    helper_name += "_url"
+  #   helper_name = url_arr.join("_")
+  #   helper_name += "_url"
+  #   url = "/" + url_arr.join("/")
 
-    define_method(helper_name) do |id|
-      obj_id = id.try(:id)
-      url = url_arr.map do |el|
-        if el == "id"
-          "#{obj_id || id}"
-        else
-          el
-        end
-      end
+  #   define_method(helper_name) do
+  #     url
+  #   end
+  # end
+
+  # def self.make_id_helpers(url_arr)
+  #   name_arr = url_arr.dup
+  #   name_arr[0] = url_arr.first.singularize
+
+  #   filtered_arr = name_arr.reject do |el| 
+  #     el == "id" || el.include?("_id")
+  #   end
+
+  #   if filtered_arr.last == "edit" || filtered_arr.last == "new"
+  #     filtered_arr.unshift(filtered_arr.pop) 
+  #   end
+  #   p helper_name = filtered_arr.join("_") + "_url"
+
+  #   define_method(helper_name) do |*ids|
+  #     url = url_arr.map do |el|
+  #       if el == "id" || el.include?("_id")
+  #         id = ids.pop
+  #         obj_id = id.try(:id)
+
+  #         "#{obj_id || id}"
+  #       else
+  #         el
+  #       end
+  #     end
         
-      "/" + url.join("/")
-    end
-  end
+  #     "/" + url.join("/")
+  #   end
+  # end
 
   def already_built_response?
     @already_built_response

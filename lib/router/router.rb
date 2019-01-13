@@ -1,6 +1,8 @@
 require_relative 'route'
+require_relative '../utils/url_helpers'
 
 class Router
+  include UrlHelpers
   attr_reader :routes, :patterns
 
   def initialize
@@ -13,10 +15,15 @@ class Router
     @current_class = nil;
   end
 
-  def see_routes
-    patterns.each do |pattern|
-      p url = pattern.inspect.delete('\^$?<>/+()')
-        .split('\\').drop(1).reject { |el| el == "d"}.join('/')
+  def display_routes
+    routes.each do |route|
+      url = Router.make_url(route.pattern)
+      method = route.http_method
+      controller = route.controller_class
+      helper = Router.make_helper_name(route.pattern)
+      action = route.action_name
+
+      puts "#{method.to_s.upcase}: #{url}, #{controller}##{action}, #{helper}"
     end
   end
 
@@ -74,7 +81,7 @@ class Router
     prc.call if prc
     reset_routes
 
-    see_routes
+    display_routes
     nil
   end
 

@@ -6,7 +6,8 @@ class User < ApplicationModel
   validates :password, length: { minimum: 6, allow_nil: true }
   validates :session_token, presence: true, uniqueness: true
 
-  belongs_to :house
+  belongs_to :house,
+    optional: true
 
   has_many :cats,
     foreign_key: :owner_id
